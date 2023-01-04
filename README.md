@@ -5,3 +5,5 @@
 
 ### Diagram  
 ![스크린샷 2023-01-04 오전 9 30 54](https://user-images.githubusercontent.com/105146508/210463551-eed0b44a-8eb2-44c8-86f3-331e19c72fb6.png)
+
+이거 수정된거는 어떻게반영하면되는거지?
