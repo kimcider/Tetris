@@ -1,6 +1,0 @@
-/.metadata/
-/.git/
-*.DS_Store
-Tetris/**/*.DS_Store
-Tetris/**/*.project
-Tetris/**/*.classpath
