@@ -9,8 +9,7 @@ public class Main {
 	public static final int BOARD_START_HEIGHT = 40;
 	public static final int BOARD_START_WIDTH = 200;
 	public static void main(String[]args) {
-		Control control = new Control();
-		control.start();
-		//control.addBlock();
+		Initilization init = new Initilization();
+		
 	}
 }

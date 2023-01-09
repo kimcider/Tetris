@@ -1,11 +1,35 @@
-package tetris;
+package Mino;
 
 import java.awt.*;
 import javax.swing.*;
-public class Block extends JPanel{
-	public Block() {
-		setSize(50,50);
-		setBackground(Color.blue);
+import static tetris.Main.*;
+import tetris.MinoType;
+
+public class BaseMino extends JPanel{
+	Color color;
+	
+	int[] position = new int[2];
+	 /* 
+	 * position[0]은 baseMino의 Height를,
+	 * position[1]은 baseMino의 Width를 지칭한다.
+	 */
+	public BaseMino(MinoType type) {
 		setVisible(true);
+		setSize(BLOCK_SIZE,BLOCK_SIZE);
+		setBackground(type.getColor());
+	}
+	public void setPosition(int[] position) {
+		this.position[0] = position[0];
+		this.position[1] = position[1];
+	}
+	public int[] getPosition() {
+		return position;
+	}
+	
+	public int getHeightPosition() {
+		return position[0];
+	}
+	public int getWidthPosition() {
+		return position[1];
 	}
 }

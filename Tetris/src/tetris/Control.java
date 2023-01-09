@@ -2,12 +2,14 @@ package tetris;
 
 import static tetris.Main.*;
 import javax.swing.*;
+import Mino.BaseMino;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import Mino.*;
 public class Control extends JFrame{
-	Board bd;
-	Block bl;
+	Board board;
+	O_Mino oMino;
 	int x;
 	int y;
 	public Control() {
@@ -15,40 +17,46 @@ public class Control extends JFrame{
 		setVisible(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		addKeyListener(new KeyboardListener());
-		x = 100;
-		y = 100;
+		x = 5;
+		y = 0;
 	}
 	public void paintComponent(Graphics g) {
 		g.setColor(Color.green);
 		g.fillRect(0, 0, FRAME_WIDTH, FRAME_HEIGHT);
 	}
 	public void start() {
-		bd = new Board();
-		add(bd);
-		bd.setBounds(BOARD_START_WIDTH,BOARD_START_HEIGHT,bd.getWidth(),bd.getHeight());
-		addBlock();
+		board = new Board();
+		add(board);
+		board.setBounds(BOARD_START_WIDTH,BOARD_START_HEIGHT,board.getWidth(),board.getHeight());
+		add_O_Mino();
 	}
-	public void addBlock() {
-		bl = new Block();	
-		bl.setBounds(x,y,bl.getWidth(),bl.getHeight());
-		bd.add(bl);
+	public void add_O_Mino() {
+		oMino = new O_Mino();
+		oMino.setPosition(x,y);
+		for(int i = 0; i < 4; i++) {
+			board.add(oMino.getBaseMino(i));
+		}
+		board.repaint();
+		
 	}
 
 	class KeyboardListener implements KeyListener{
 		public void keyPressed(KeyEvent e) {
 			if(e.getKeyCode() == KeyEvent.VK_RIGHT) {
-				x += BLOCK_SIZE;
+				x += 1;
 			}
 			else if(e.getKeyCode() == KeyEvent.VK_LEFT) {
-				x -= BLOCK_SIZE;
+				x -= 1;
 			}
 			else if(e.getKeyCode() == KeyEvent.VK_UP) {
-				y -= BLOCK_SIZE;
+				y -= 1;
 			}
 			else if(e.getKeyCode() == KeyEvent.VK_DOWN) {
-				y += BLOCK_SIZE;
+				y += 1;
 			}
-			bl.setBounds(x,y,bl.getWidth(),bl.getHeight());
+//			baseMino.setBounds(x,y,baseMino.getWidth(),baseMino.getHeight());
+			oMino.setPosition(x, y);
+			
 		}
 		public void keyReleased(KeyEvent e) {
 			
