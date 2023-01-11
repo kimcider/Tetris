@@ -31,6 +31,18 @@ public class Position {
 			position[3][0] = 1;
 			position[3][1] = 1;
 			break;
+		case I_Mino:
+			position[0][0] = -2;
+			position[0][1] = 0;
+			
+			position[1][0] = -1;
+			position[1][1] = 0;
+
+			position[2][0] = 0;
+			position[2][1] = 0;
+
+			position[3][0] = 1;
+			position[3][1] = 0;
 		}
 	}
 	public int[][] getPosition() {

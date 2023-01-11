@@ -9,7 +9,7 @@ import java.awt.event.KeyListener;
 import Mino.*;
 public class Control extends JFrame{
 	Board board;
-	O_Mino oMino;
+	Mino mino;
 	int x;
 	int y;
 	public Control() {
@@ -28,34 +28,39 @@ public class Control extends JFrame{
 		board = new Board();
 		add(board);
 		board.setBounds(BOARD_START_WIDTH,BOARD_START_HEIGHT,board.getWidth(),board.getHeight());
-		add_O_Mino();
+		addMino(MinoType.I_Mino);
 	}
-	public void add_O_Mino() {
-		oMino = new O_Mino();
-		oMino.setPosition(x,y);
+	public void addMino(MinoType type) {
+		mino = new Mino(type);
+		mino.setPosition(x,y);
 		for(int i = 0; i < 4; i++) {
-			board.add(oMino.getBaseMino(i));
+			board.add(mino.getBaseMino(i));
 		}
 		board.repaint();
-		
 	}
+	
 
 	class KeyboardListener implements KeyListener{
 		public void keyPressed(KeyEvent e) {
 			if(e.getKeyCode() == KeyEvent.VK_RIGHT) {
 				x += 1;
+				mino.setPosition(x, y);
 			}
 			else if(e.getKeyCode() == KeyEvent.VK_LEFT) {
 				x -= 1;
+				mino.setPosition(x, y);
 			}
-			else if(e.getKeyCode() == KeyEvent.VK_UP) {
-				y -= 1;
-			}
+//			else if(e.getKeyCode() == KeyEvent.VK_UP) {
+//				y -= 1;
+//				mino.setPosition(x, y);
+//			}
 			else if(e.getKeyCode() == KeyEvent.VK_DOWN) {
 				y += 1;
+				mino.setPosition(x, y);
 			}
-//			baseMino.setBounds(x,y,baseMino.getWidth(),baseMino.getHeight());
-			oMino.setPosition(x, y);
+			else if(e.getKeyCode() == KeyEvent.VK_UP) {
+				System.out.println("ㅇㅇㅇㅇ");
+			}
 			
 		}
 		public void keyReleased(KeyEvent e) {
