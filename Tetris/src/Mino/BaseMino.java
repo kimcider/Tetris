@@ -26,10 +26,13 @@ public class BaseMino extends JPanel{
 		return position;
 	}
 	
-	public int getHeightPosition() {
+	/* Y좌표 반환 */
+	public int getHeightPosition() { 
 		return position[0];
 	}
-	public int getWidthPosition() {
+	
+	/* X좌표 반환 */
+	public int getWidthPosition() { 
 		return position[1];
 	}
 }

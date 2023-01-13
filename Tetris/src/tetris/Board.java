@@ -27,6 +27,7 @@ public class Board extends JPanel{
 				g.setColor(board[i][j].getType().getColor());
 				g.fillRect(x, y, BLOCK_SIZE, BLOCK_SIZE);
 
+				/* 격자 선그리기 */
 				g.setColor(new Color(150,75,0));
 				g.drawRect(x, y, BLOCK_SIZE, BLOCK_SIZE);
 				x = x + BLOCK_SIZE;
@@ -35,6 +36,7 @@ public class Board extends JPanel{
 			y = y + BLOCK_SIZE;
 		}
 	}
+	
 	class block {
 		private MinoType type;
 		Color color;
