@@ -1,7 +1,7 @@
 package Mino;
 
-import static tetris.Main.*;
-import tetris.MinoType;
+import static Tetris.Main.*;
+
 import javax.swing.*;
 
 /*
@@ -54,7 +54,7 @@ public class Mino {
 	 * 
 	 * 다음의 몇번째 미노인지에 따라서 미노가 출력되는 y좌표가 달라진다.
 	 */
-	public void addMinoToNextMinoBoard(JPanel board, int x, int y, int size, int number) {
+	public void addMinoToOtherBoard(JPanel board, int x, int y, int size, int number) {
 		this.setPosition(x, y + (number * 4) , size);
 		for(int i = 0;i < 4; i++) {
 			board.add(this.getBaseMino(i));
@@ -76,7 +76,7 @@ public class Mino {
 	 * Mino를 NextMinoBoard에서 제거. 
 	 * Mino 자체는 Panel이 아니기 때문에 baseMino를 얻어와 각각의 baseMino를 NextMinoBoard에서 떼어준다.
 	 */
-	public void removeMinoFromNextMinoBoard(JPanel board) {
+	public void removeMinoFromOtherBoard(JPanel board) {
 		for(int i = 0; i < 4; i++) {
 			board.remove(this.getBaseMino(i));
 		}
@@ -96,7 +96,7 @@ public class Mino {
 	 */
 	public void setPosition(int h, int w, int size) {
 		for(int i = 0; i < 4; i++) {
-			mino[i].setBounds(h * NEXT_MINO_BOARD_BLOCK_SIZE + mino[i].getHeightPosition() * NEXT_MINO_BOARD_BLOCK_SIZE + 1,w * NEXT_MINO_BOARD_BLOCK_SIZE + mino[i].getWidthPosition() * NEXT_MINO_BOARD_BLOCK_SIZE + 1, NEXT_MINO_BOARD_BLOCK_SIZE - 2,NEXT_MINO_BOARD_BLOCK_SIZE - 2);
+			mino[i].setBounds(h * OTHER_BOARD_BLOCK_SIZE + mino[i].getHeightPosition() * OTHER_BOARD_BLOCK_SIZE + 1,w * OTHER_BOARD_BLOCK_SIZE + mino[i].getWidthPosition() * OTHER_BOARD_BLOCK_SIZE + 1, OTHER_BOARD_BLOCK_SIZE - 2,OTHER_BOARD_BLOCK_SIZE - 2);
 		}
 	}
 	/*

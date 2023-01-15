@@ -1,8 +1,11 @@
-package tetris;
+package Board;
 import javax.swing.*;
+
+import static Tetris.Main.*;
+
 import java.awt.*;
 import java.util.Random;
-import static tetris.Main.*;
+
 import Mino.*;
 public class NextMinoBoard extends JPanel{
 	int height;
@@ -14,8 +17,8 @@ public class NextMinoBoard extends JPanel{
 	public NextMinoBoard(JPanel board) {
 		this.board = board;
 		setVisible(true);
-		width = NEXT_MINO_BOARD_BLOCK_SIZE * 6;
-		height = NEXT_MINO_BOARD_BLOCK_SIZE * 4 * 6;
+		width = OTHER_BOARD_BLOCK_SIZE * 6;
+		height = OTHER_BOARD_BLOCK_SIZE * 4 * 6;
 		setSize(width,height);
 		setBackground(Color.black);
 		setBounds(BOARD_START_WIDTH + BLOCK_SIZE * (BOARD_WIDTH + 1), BOARD_START_HEIGHT, getWidth(),getHeight());
@@ -69,7 +72,7 @@ public class NextMinoBoard extends JPanel{
 	 * 7개의 미노를 다 반환할 경우, 다음 미노리스트를 생성한다.
 	 */
 	public Mino getMino() {
-		nextMinoList[0][index].removeMinoFromNextMinoBoard(this);
+		nextMinoList[0][index].removeMinoFromOtherBoard(this);
 		Mino answer = nextMinoList[0][index];	
 		index = index + 1;
 		if(index == 7) {
@@ -90,10 +93,10 @@ public class NextMinoBoard extends JPanel{
 			if(temp_index < 7) {
 				MinoType type = nextMinoList[list_index][temp_index].getType();
 				if(type == MinoType.S_Mino || type == MinoType.I_Mino) {
-					nextMinoList[list_index][temp_index].addMinoToNextMinoBoard(this, 3, 1, NEXT_MINO_BOARD_BLOCK_SIZE, i);
+					nextMinoList[list_index][temp_index].addMinoToOtherBoard(this, 3, 1, OTHER_BOARD_BLOCK_SIZE, i);
 				}
 				else {
-					nextMinoList[list_index][temp_index].addMinoToNextMinoBoard(this, 2, 1, NEXT_MINO_BOARD_BLOCK_SIZE, i);
+					nextMinoList[list_index][temp_index].addMinoToOtherBoard(this, 2, 1, OTHER_BOARD_BLOCK_SIZE, i);
 				}
 			}
 			temp_index++;

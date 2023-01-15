@@ -1,4 +1,4 @@
-package tetris;
+package Tetris;
 
 public class Initilization {
 	public Initilization() {

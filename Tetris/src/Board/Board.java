@@ -1,13 +1,16 @@
-package tetris;
+package Board;
 
 import javax.swing.*;
-import java.awt.*;
-import static tetris.Main.BLOCK_SIZE;
-import static tetris.Main.BOARD_HEIGHT;
-import static tetris.Main.BOARD_START_HEIGHT;
-import static tetris.Main.BOARD_START_WIDTH;
-import static tetris.Main.BOARD_WIDTH;
 
+import Mino.MinoType;
+
+import static Tetris.Main.BLOCK_SIZE;
+import static Tetris.Main.BOARD_HEIGHT;
+import static Tetris.Main.BOARD_START_HEIGHT;
+import static Tetris.Main.BOARD_START_WIDTH;
+import static Tetris.Main.BOARD_WIDTH;
+
+import java.awt.*;
 import java.awt.*;
 public class Board extends JPanel{
 	private block[][] board;

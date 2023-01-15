@@ -1,4 +1,4 @@
-package tetris;
+package Tetris;
 
 public class Main {
 	public static final int FRAME_HEIGHT = 800;
@@ -8,7 +8,7 @@ public class Main {
 	public static final int BOARD_WIDTH = 10;
 	public static final int BOARD_START_HEIGHT = 40;
 	public static final int BOARD_START_WIDTH = 200;
-	public static final int NEXT_MINO_BOARD_BLOCK_SIZE = 20;
+	public static final int OTHER_BOARD_BLOCK_SIZE = 20;
 	public static void main(String[]args) {
 		Initilization init = new Initilization();
 		

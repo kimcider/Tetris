@@ -1,9 +1,9 @@
 package Mino;
 
+import static Tetris.Main.*;
+
 import java.awt.*;
 import javax.swing.*;
-import static tetris.Main.*;
-import tetris.MinoType;
 
 public class BaseMino extends JPanel{
 	Color color;

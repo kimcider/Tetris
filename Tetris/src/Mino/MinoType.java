@@ -1,6 +1,5 @@
-package tetris;
+package Mino;
 import java.awt.*;
-import Mino.*;
 
 public enum MinoType {
 	EMPTY(Color.black, MinoPosition.EmptyPosition()),
