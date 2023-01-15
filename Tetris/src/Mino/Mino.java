@@ -1,8 +1,8 @@
 package Mino;
 
-import static tetris.Main.BLOCK_SIZE;
+import static tetris.Main.*;
 import tetris.MinoType;
-
+import javax.swing.*;
 
 /*
  * Mino는 baseMino 4개로 구성된다. 
@@ -13,8 +13,6 @@ import tetris.MinoType;
  * 모든 mino는 4개의 회전상태를 갖는다. 
  * 
  * 모든 미노는 7개 중 하나의 타입을 갖는다. 
- * 
- * 
  */
 public class Mino {
 	private BaseMino[] mino = new BaseMino[4];
@@ -39,7 +37,53 @@ public class Mino {
 	}
 	
 	/*
+	 * Mino를 Board에 부착.
+	 * Mino 자체는 panel이 아니기 때문에 baseMino를 얻어와 각각의 baseMino들을 Board에 붙여준다.
+	 */
+	public void addMinoToBoard(JPanel board, int x, int y) {
+		this.setPosition(x, y);
+		for(int i = 0; i < 4; i++) {
+			board.add(this.getBaseMino(i));
+		}
+		board.repaint();
+	}
+	
+	/* 
+	 * Mino를 NextMinoBoard에 부착.
+	 * Mino 자체는 Panel이 아니기 때문에 BaseMino를 얻어와 각각의 baseMino들을 NextMinoBoard에 붙여준다.
+	 * 
+	 * 다음의 몇번째 미노인지에 따라서 미노가 출력되는 y좌표가 달라진다.
+	 */
+	public void addMinoToNextMinoBoard(JPanel board, int x, int y, int size, int number) {
+		this.setPosition(x, y + (number * 4) , size);
+		for(int i = 0;i < 4; i++) {
+			board.add(this.getBaseMino(i));
+		}
+		board.repaint();
+	}
+	
+	/*
+	 * Mino를 Board에서 제거. 
+	 * Mino 자체는 Panel이 아니기 때문에 baseMino를 얻어와 각각의 baseMino를 Board에서 떼어준다.
+	 */
+	public void removeMinoFromBoard(JPanel board) {
+		for(int i = 0; i < 4; i++) {
+			board.remove(this.getBaseMino(i));
+		}
+	}
+	
+	/*
+	 * Mino를 NextMinoBoard에서 제거. 
+	 * Mino 자체는 Panel이 아니기 때문에 baseMino를 얻어와 각각의 baseMino를 NextMinoBoard에서 떼어준다.
+	 */
+	public void removeMinoFromNextMinoBoard(JPanel board) {
+		for(int i = 0; i < 4; i++) {
+			board.remove(this.getBaseMino(i));
+		}
+	}
+	/*
 	 * h와 w를 기준삼고, 각각의 mino들의 상대적인 위치를 활용하여 Board의 어느 위치에 Mino를 위치시킬지를 결정한다.
+	 * 기본적으로 Board에 넣는 것을 전제로 하기에 BLOCK_SIZE를 기준으로 한다. 
 	 */
 	public void setPosition(int h, int w) {
 		for(int i = 0; i < 4; i++) {
@@ -47,6 +91,14 @@ public class Mino {
 		}
 	}
 	
+	/*
+	 * NextMinoBoard에 넣기 위해, NextMinoBoard의 블록 사이즈를 기준으로 한 setPosition의 overloading. 
+	 */
+	public void setPosition(int h, int w, int size) {
+		for(int i = 0; i < 4; i++) {
+			mino[i].setBounds(h * NEXT_MINO_BOARD_BLOCK_SIZE + mino[i].getHeightPosition() * NEXT_MINO_BOARD_BLOCK_SIZE + 1,w * NEXT_MINO_BOARD_BLOCK_SIZE + mino[i].getWidthPosition() * NEXT_MINO_BOARD_BLOCK_SIZE + 1, NEXT_MINO_BOARD_BLOCK_SIZE - 2,NEXT_MINO_BOARD_BLOCK_SIZE - 2);
+		}
+	}
 	/*
 	 * Mino는 그 자체로 JPanel이 아니다.
 	 * 따라서 JPanel과 관련된 작업을 수행해야 할 경우를 위해 각각의 basemino들을 반환해준다. 
@@ -76,4 +128,6 @@ public class Mino {
 	public MinoType getType() {
 		return type;
 	}
+	
+
 }

@@ -4,6 +4,8 @@ import javax.swing.*;
 import java.awt.*;
 import static tetris.Main.BLOCK_SIZE;
 import static tetris.Main.BOARD_HEIGHT;
+import static tetris.Main.BOARD_START_HEIGHT;
+import static tetris.Main.BOARD_START_WIDTH;
 import static tetris.Main.BOARD_WIDTH;
 
 import java.awt.*;
@@ -12,6 +14,7 @@ public class Board extends JPanel{
 	public Board() {
 		setVisible(true);
 		setSize(BLOCK_SIZE * BOARD_WIDTH, BLOCK_SIZE * BOARD_HEIGHT);
+		setBounds(BOARD_START_WIDTH,BOARD_START_HEIGHT,getWidth(),getHeight());
 		board = new block[BOARD_HEIGHT][BOARD_WIDTH];
 		for(int i=0;i<BOARD_HEIGHT;i++) {
 			for(int j=0;j<BOARD_WIDTH;j++) {
