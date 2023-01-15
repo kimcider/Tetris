@@ -1,7 +1,8 @@
 package Board;
 
-import java.awt.*;
-import javax.swing.*;
+import java.awt.Graphics;
+import java.awt.Color;
+import javax.swing.JPanel;
 import java.util.Random;
 
 import static Tetris.Main.*;
