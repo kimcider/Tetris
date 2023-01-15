@@ -1,5 +1,6 @@
 package Mino;
-import java.awt.*;
+
+import java.awt.Color;
 
 public enum MinoType {
 	EMPTY(Color.black, MinoPosition.EmptyPosition()),

@@ -1,8 +1,8 @@
 package Mino;
 
+import javax.swing.JPanel;
 import static Tetris.Main.*;
 
-import javax.swing.*;
 
 /*
  * Mino는 baseMino 4개로 구성된다. 

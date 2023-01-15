@@ -9,6 +9,7 @@ public class Main {
 	public static final int BOARD_START_HEIGHT = 40;
 	public static final int BOARD_START_WIDTH = 200;
 	public static final int OTHER_BOARD_BLOCK_SIZE = 20;
+	
 	public static void main(String[]args) {
 		Initilization init = new Initilization();
 		

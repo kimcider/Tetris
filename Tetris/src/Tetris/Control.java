@@ -1,12 +1,13 @@
 package Tetris;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JFrame;
+import java.awt.Graphics;
+import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 import static Tetris.Main.*;
-import Mino.*;
+import Mino.Mino;
 import Board.*;
 
 public class Control extends JFrame{

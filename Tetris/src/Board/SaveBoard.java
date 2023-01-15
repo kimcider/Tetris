@@ -2,9 +2,9 @@ package Board;
 import javax.swing.*;
 import java.awt.*;
 import static Tetris.Main.*;
-import Mino.*;
+import Mino.Mino;
+import Mino.MinoType;
 
-import static Tetris.Control.*;
 public class SaveBoard extends JPanel{
 	int height;
 	int width;

@@ -1,12 +1,13 @@
 package Board;
-import javax.swing.*;
-
-import static Tetris.Main.*;
 
 import java.awt.*;
+import javax.swing.*;
 import java.util.Random;
 
-import Mino.*;
+import static Tetris.Main.*;
+import Mino.Mino;
+import Mino.MinoType;
+
 public class NextMinoBoard extends JPanel{
 	int height;
 	int width;
