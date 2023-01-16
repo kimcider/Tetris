@@ -2,6 +2,15 @@ package Mino;
 
 /*
  * WallKick은 "https://tetris.fandom.com/wiki/SRS"을 참조함.
+ * offset[a][b][c][d]
+ * a: rotate 전의 rotate state
+ * b: rotate direction
+ * 	b == 0 : right rotate
+ * 	b == 1 : left rotate
+ * c: test case number. 총 5개의 testcase를 검사
+ * d: testcase offset
+ * 	d == 0 : X좌표. 양의 x좌표: 오른쪽으로 이동. 
+ * 	d == 1 : Y좌표. 양의 y좌표: 위쪽으로 이동. (우리의 Board는 꼭대기의 y좌표가 0임을 유의! 음수값을 취해서 사용해야한다)
  */
 
 public  class WallKick {
