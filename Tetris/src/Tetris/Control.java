@@ -8,13 +8,14 @@ import java.awt.event.KeyListener;
 
 import static Tetris.Main.*;
 import Mino.Mino;
+import Mino.WallKick;
 import Board.*;
 
 public class Control extends JFrame{
-	Board board;
-	Mino mino;
-	NextMinoBoard nextMinoBoard;
-	SaveBoard saveBoard;
+	private Board board;
+	private Mino mino;
+	private NextMinoBoard nextMinoBoard;
+	private SaveBoard saveBoard;
 	int x;
 	int y;
 	int xInitValue;
@@ -96,27 +97,110 @@ public class Control extends JFrame{
 			saveMinoFlag = true;
 		}
 	}
+	
+	public void moveMino(Mino mino, int x, int y, int xVector, int yVector) {
+		boolean answer = mino.checkToMove(board, x + xVector, y + yVector, mino.getRotation());
+		if(answer == true) {
+			this.x = x + xVector;
+			this.y = y + yVector;
+			mino.setPosition(this.x , this.y);
+		}
+	}
+	
+	
+	/*
+	 * Mino를 회전시킨다. 
+	 * 
+	 * mino: 회전시킬 미노 
+	 * 
+	 * x: mino의 현재 x좌표
+	 * y: mino의 현재 y좌표 
+	 * 
+	 * rotate == 1 : right rotate
+	 * rotate == 0 : left rotate
+	 *  
+	 */
+	public void rotateMino(Mino mino, int x, int y, int rotate) {
+		int[][] offset;
+		int originalX = x;
+		int originalY = y;
+		
+		/*
+		 * WallKick.getOffset(type, rotation, direction)
+		 * diretion == 0 : right rotation
+		 * direction == 1 : left rotation
+		 */
+		if(rotate == 1) {
+			offset = WallKick.getOffset(mino.getType(), mino.getRotation(), 0);
+		}
+		else {
+			offset = WallKick.getOffset(mino.getType(), mino.getRotation(), 1);
+		}
+		
+		/*
+		 * WallKick의 5가지 offset을 각각체크
+		 */
+		for(int i = 0; i < 5; i++) {	
+			int offsetX = offset[i][0];
+			int offsetY = -offset[i][1];
+			
+			x = originalX + offsetX;
+			y = originalY + offsetY;
+			
+			boolean answer;		
+			if(rotate == 1) {
+				answer  = mino.checkToMove(board, x, y, (mino.getRotation() + 1) % 4);
+				if(answer == true) {
+					mino.rotate(x, y, 1);
+					this.x = x;
+					this.y = y;
+					return;
+				}
+			}else {
+				answer = mino.checkToMove(board, x, y, (mino.getRotation() + 4 - 1) % 4);
+				if(answer == true) {
+					mino.rotate(x, y, -1);
+					this.x = x;
+					this.y = y;
+					return;
+				}
+			}
+
+		}
+
+	}
 	class KeyboardListener implements KeyListener{
 		public void keyPressed(KeyEvent e) {
-			
+			//move right
 			if(e.getKeyCode() == KeyEvent.VK_RIGHT) {
-				x += 1;
-				mino.setPosition(x, y);
+				moveMino(mino, x, y, 1, 0);
 			}
+			//move left
 			else if(e.getKeyCode() == KeyEvent.VK_LEFT) {
-				x -= 1;
-				mino.setPosition(x, y);
+				moveMino(mino, x, y, -1, 0);
 			}
-			else if(e.getKeyCode() == KeyEvent.VK_UP) {
-				mino.rotate(x, y);
+			
+			//right rotate
+			else if(e.getKeyCode() == KeyEvent.VK_UP || e.getKeyChar() == 'ㅌ' || e.getKeyChar() == 'X' || e.getKeyChar() == 'x') {
+				rotateMino(mino, x, y, 1);
 			}
+			//left rotate
+			else if(e.getKeyCode() == KeyEvent.VK_CONTROL || e.getKeyChar() == 'ㅋ' || e.getKeyChar() == 'Z' || e.getKeyChar() == 'z') {
+				rotateMino(mino, x, y, 0);
+			}
+			
+			//move down
 			else if(e.getKeyCode() == KeyEvent.VK_DOWN) {
-				y += 1;
-				mino.setPosition(x, y);
+				moveMino(mino, x, y, 0, 1);
 			}
+			
+			//quick move down
 			else if(e.getKeyCode() == KeyEvent.VK_SPACE) {
 				changeMino();
-			}else if(e.getKeyChar() == 'a' || e.getKeyChar() == 'ㅁ' || e.getKeyChar() == 'A'){
+			}
+			
+			//save mino
+			else if( e.getKeyCode() == KeyEvent.VK_SHIFT || e.getKeyChar() == 'ㅊ'|| e.getKeyChar() == 'C' || e.getKeyChar() == 'c' ){
 				saveMino(mino);
 			}
 		}

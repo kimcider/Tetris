@@ -35,7 +35,7 @@ public class SaveBoard extends JPanel{
 		
 		mino.removeMinoFromBoard(board);
 		if(isSaved == true) {
-			this.mino.removeMinoFromOtherBoard(this);
+			this.mino.removeMinoFromBoard(this);
 		}
 		
 		if(isSaved == false) {
@@ -52,10 +52,10 @@ public class SaveBoard extends JPanel{
 	
 	private void attach() {
 		if(mino.getType() == MinoType.S_Mino) {
-			mino.addMinoToOtherBoard(this, 4, 2, OTHER_BOARD_BLOCK_SIZE, 0);
+			mino.addMinoToBoard(this, 4, 2, OTHER_BOARD_BLOCK_SIZE, 0);
 		}
 		else{
-			mino.addMinoToOtherBoard(this, 3, 2, OTHER_BOARD_BLOCK_SIZE, 0);
+			mino.addMinoToBoard(this, 3, 2, OTHER_BOARD_BLOCK_SIZE, 0);
 		}
 	}
 }

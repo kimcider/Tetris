@@ -3,6 +3,7 @@ package Mino;
 import javax.swing.JPanel;
 import static Tetris.Main.*;
 
+import Board.Board;
 
 /*
  * Mino는 baseMino 4개로 구성된다. 
@@ -37,6 +38,22 @@ public class Mino {
 	}
 	
 	/*
+	 * Mino는 그 자체로 JPanel이 아니다.
+	 * 따라서 JPanel과 관련된 작업을 수행해야 할 경우를 위해 각각의 basemino들을 반환해준다. 
+	 */
+	public BaseMino getBaseMino(int num) {
+		return mino[num];
+	}
+	
+
+	/*
+	 *  어떤 종류의 미노인지를 반환한다.
+	 */
+	public MinoType getType() {
+		return type;
+	}
+	
+	/*
 	 * Mino를 Board에 부착.
 	 * Mino 자체는 panel이 아니기 때문에 baseMino를 얻어와 각각의 baseMino들을 Board에 붙여준다.
 	 */
@@ -49,12 +66,12 @@ public class Mino {
 	}
 	
 	/* 
-	 * Mino를 NextMinoBoard에 부착.
-	 * Mino 자체는 Panel이 아니기 때문에 BaseMino를 얻어와 각각의 baseMino들을 NextMinoBoard에 붙여준다.
+	 * Mino를 OtherBoard에 부착.
+	 * Mino 자체는 Panel이 아니기 때문에 BaseMino를 얻어와 각각의 baseMino들을 OtherBoard에 붙여준다.
 	 * 
 	 * 다음의 몇번째 미노인지에 따라서 미노가 출력되는 y좌표가 달라진다.
 	 */
-	public void addMinoToOtherBoard(JPanel board, int x, int y, int size, int number) {
+	public void addMinoToBoard(JPanel board, int x, int y, int size, int number) {
 		this.setPosition(x, y + (number * 4) , size);
 		for(int i = 0;i < 4; i++) {
 			board.add(this.getBaseMino(i));
@@ -71,63 +88,67 @@ public class Mino {
 			board.remove(this.getBaseMino(i));
 		}
 	}
-	
-	/*
-	 * Mino를 NextMinoBoard에서 제거. 
-	 * Mino 자체는 Panel이 아니기 때문에 baseMino를 얻어와 각각의 baseMino를 NextMinoBoard에서 떼어준다.
-	 */
-	public void removeMinoFromOtherBoard(JPanel board) {
-		for(int i = 0; i < 4; i++) {
-			board.remove(this.getBaseMino(i));
-		}
-	}
+
 	/*
 	 * h와 w를 기준삼고, 각각의 mino들의 상대적인 위치를 활용하여 Board의 어느 위치에 Mino를 위치시킬지를 결정한다.
 	 * 기본적으로 Board에 넣는 것을 전제로 하기에 BLOCK_SIZE를 기준으로 한다. 
 	 */
-	public void setPosition(int h, int w) {
+	public void setPosition(int w, int h) {
 		for(int i = 0; i < 4; i++) {
-			mino[i].setBounds(h * BLOCK_SIZE + mino[i].getHeightPosition() * BLOCK_SIZE + 1,w * BLOCK_SIZE + mino[i].getWidthPosition() * BLOCK_SIZE + 1, BLOCK_SIZE - 2,BLOCK_SIZE - 2);
+			mino[i].setBounds(w * BLOCK_SIZE + mino[i].getWidthPosition() * BLOCK_SIZE + 1,h * BLOCK_SIZE + mino[i].getHeightPosition() * BLOCK_SIZE + 1, BLOCK_SIZE - 2,BLOCK_SIZE - 2);
 		}
 	}
 	
 	/*
-	 * NextMinoBoard에 넣기 위해, NextMinoBoard의 블록 사이즈를 기준으로 한 setPosition의 overloading. 
+	 * OtherBoard에 넣기 위해, OtherBoard의 블록 사이즈를 기준으로 한 setPosition의 overloading. 
 	 */
-	public void setPosition(int h, int w, int size) {
+	public void setPosition(int w, int h, int size) {
 		for(int i = 0; i < 4; i++) {
-			mino[i].setBounds(h * OTHER_BOARD_BLOCK_SIZE + mino[i].getHeightPosition() * OTHER_BOARD_BLOCK_SIZE + 1,w * OTHER_BOARD_BLOCK_SIZE + mino[i].getWidthPosition() * OTHER_BOARD_BLOCK_SIZE + 1, OTHER_BOARD_BLOCK_SIZE - 2,OTHER_BOARD_BLOCK_SIZE - 2);
+			mino[i].setBounds(w * OTHER_BOARD_BLOCK_SIZE + mino[i].getWidthPosition() * OTHER_BOARD_BLOCK_SIZE + 1,h * OTHER_BOARD_BLOCK_SIZE + mino[i].getHeightPosition() * OTHER_BOARD_BLOCK_SIZE + 1, OTHER_BOARD_BLOCK_SIZE - 2,OTHER_BOARD_BLOCK_SIZE - 2);
 		}
 	}
-	/*
-	 * Mino는 그 자체로 JPanel이 아니다.
-	 * 따라서 JPanel과 관련된 작업을 수행해야 할 경우를 위해 각각의 basemino들을 반환해준다. 
-	 */
-	public BaseMino getBaseMino(int num) {
-		return mino[num];
-	}
-	
+
 	/*
 	 * 미노를 회전시킨다.
 	 */
-	public void rotate(int h, int w) {
-		rotation = (rotation + 1) % 4;
+	public void rotate(int w, int h, int rotate) {
+		rotation = (rotation + rotate + 4) % 4;
 		int[][] temp_position = new int[4][2];
 		temp_position = MinoType.EMPTY.getPosition(type, rotation);
 		for(int i = 0; i < 4; i++) {
 			mino[i].setPosition(temp_position[i]);
 		}
 		for(int i = 0; i < 4; i++) {
-			mino[i].setBounds(h * BLOCK_SIZE + mino[i].getHeightPosition() * BLOCK_SIZE + 1,w * BLOCK_SIZE + mino[i].getWidthPosition() * BLOCK_SIZE + 1, BLOCK_SIZE - 2,BLOCK_SIZE - 2);
+			mino[i].setBounds(w * BLOCK_SIZE + mino[i].getWidthPosition() * BLOCK_SIZE + 1,h * BLOCK_SIZE + mino[i].getHeightPosition() * BLOCK_SIZE + 1, BLOCK_SIZE - 2,BLOCK_SIZE - 2);
 		}
 	}
 	
-	/*
-	 *  어떤 종류의 미노인지를 반환한다.
-	 */
-	public MinoType getType() {
-		return type;
+	public int getRotation() {
+		return rotation;
 	}
 	
+	
+	/*
+	 * BaseMino들의 위치를 Board기준의 x,y좌표로 변환 후, board의 checkToMove()함수를 호출해 해당 위치로 이동할 수 있는지 여부를 체크. 
+	 * 이동할 수 있으면 true를, 없으면 false를 반환. 
+	 */
+	public boolean checkToMove(Board board, int x, int y, int rotate){
+		int[][] position = new int[4][2];
+		position = type.getPosition(this.getType(), rotate);
+		int[][] temp_position = new int[4][2];
+		for(int i = 0; i < 4; i++) {
+			temp_position[i][0] = x + position[i][0];
+			temp_position[i][1] = y + position[i][1];
+		}
+		
+		/*
+		 * temp_position을 Board에확인해보면되는거지. 
+		 */
+		boolean answer = board.checkToMove(temp_position);
+		if(answer == true) {
+			return true;
+		}
+		else return false;
+	}
 
 }

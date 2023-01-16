@@ -74,7 +74,7 @@ public class NextMinoBoard extends JPanel{
 	 * 7개의 미노를 다 반환할 경우, 다음 미노리스트를 생성한다.
 	 */
 	public Mino getMino() {
-		nextMinoList[0][index].removeMinoFromOtherBoard(this);
+		nextMinoList[0][index].removeMinoFromBoard(this);
 		Mino answer = nextMinoList[0][index];	
 		index = index + 1;
 		if(index == 7) {
@@ -95,10 +95,10 @@ public class NextMinoBoard extends JPanel{
 			if(temp_index < 7) {
 				MinoType type = nextMinoList[list_index][temp_index].getType();
 				if(type == MinoType.S_Mino || type == MinoType.I_Mino) {
-					nextMinoList[list_index][temp_index].addMinoToOtherBoard(this, 3, 1, OTHER_BOARD_BLOCK_SIZE, i);
+					nextMinoList[list_index][temp_index].addMinoToBoard(this, 3, 1, OTHER_BOARD_BLOCK_SIZE, i);
 				}
 				else {
-					nextMinoList[list_index][temp_index].addMinoToOtherBoard(this, 2, 1, OTHER_BOARD_BLOCK_SIZE, i);
+					nextMinoList[list_index][temp_index].addMinoToBoard(this, 2, 1, OTHER_BOARD_BLOCK_SIZE, i);
 				}
 			}
 			temp_index++;
