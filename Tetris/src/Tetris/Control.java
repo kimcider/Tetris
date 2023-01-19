@@ -81,6 +81,7 @@ public class Control extends JFrame{
 	 * savedMinoFlag는 changMino()시에만 false로 바뀜을 주의하라.
 	 */
 	public void saveMino(Mino target) {
+		target.setRotate(0);
 		if(saveMinoFlag == false) {
 			mino = saveBoard.save(mino);
 			
@@ -98,12 +99,25 @@ public class Control extends JFrame{
 		}
 	}
 	
-	public void moveMino(Mino mino, int x, int y, int xVector, int yVector) {
+	public boolean moveMino(Mino mino, int x, int y, int xVector, int yVector) {
 		boolean answer = mino.checkToMove(board, x + xVector, y + yVector, mino.getRotation());
 		if(answer == true) {
 			this.x = x + xVector;
 			this.y = y + yVector;
 			mino.setPosition(this.x , this.y);
+			return true;
+		}
+		return false;
+	}
+	
+	/*
+	 * 현재의 미노를 맨 아래로 이동시킨다. 
+	 *
+	 */
+	public void moveMinoToBottom(Mino mino, int x, int y) {
+		boolean result = true;
+		while(result) {
+			result = moveMino(mino, this.x, this.y, 0, 1);
 		}
 	}
 	
@@ -196,6 +210,8 @@ public class Control extends JFrame{
 			
 			//quick move down
 			else if(e.getKeyCode() == KeyEvent.VK_SPACE) {
+				moveMinoToBottom(mino, x, y);
+				board.stack(mino, x, y, mino.getRotation());
 				changeMino();
 			}
 			

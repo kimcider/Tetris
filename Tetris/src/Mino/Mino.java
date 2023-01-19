@@ -30,7 +30,7 @@ public class Mino {
 		 * 가령, I_Mino의 경우 각 baseMino는 차례대로 {0,0},{1,0},{2,0},{3,0} 이런식으로 표현된다. 
 		 */
 		int[][] temp_position = new int[4][2];
-		temp_position = MinoType.EMPTY.getPosition(type,0);
+		temp_position = MinoType.EMPTY.getBaseMinoRelativePosition(type,0);
 		for(int i = 0; i < 4; i++) {
 			mino[i] = new BaseMino(type);
 			mino[i].setPosition(temp_position[i]);
@@ -114,7 +114,7 @@ public class Mino {
 	public void rotate(int w, int h, int rotate) {
 		rotation = (rotation + rotate + 4) % 4;
 		int[][] temp_position = new int[4][2];
-		temp_position = MinoType.EMPTY.getPosition(type, rotation);
+		temp_position = MinoType.EMPTY.getBaseMinoRelativePosition(type, rotation);
 		for(int i = 0; i < 4; i++) {
 			mino[i].setPosition(temp_position[i]);
 		}
@@ -127,28 +127,56 @@ public class Mino {
 		return rotation;
 	}
 	
+	public void setRotate(int rotate) {
+		this.rotation = rotate;
+	}
 	
 	/*
 	 * BaseMino들의 위치를 Board기준의 x,y좌표로 변환 후, board의 checkToMove()함수를 호출해 해당 위치로 이동할 수 있는지 여부를 체크. 
 	 * 이동할 수 있으면 true를, 없으면 false를 반환. 
 	 */
 	public boolean checkToMove(Board board, int x, int y, int rotate){
-		int[][] position = new int[4][2];
-		position = type.getPosition(this.getType(), rotate);
-		int[][] temp_position = new int[4][2];
-		for(int i = 0; i < 4; i++) {
-			temp_position[i][0] = x + position[i][0];
-			temp_position[i][1] = y + position[i][1];
-		}
+//		int[][] position = new int[4][2];
+//		position = type.getPosition(this.getType(), rotate);
+//		int[][] temp_position = new int[4][2];
+//		for(int i = 0; i < 4; i++) {
+//			temp_position[i][0] = x + position[i][0];
+//			temp_position[i][1] = y + position[i][1];
+//		}
+		
+		int [][] position = getPosition(x,y,rotate);
 		
 		/*
-		 * temp_position을 Board에확인해보면되는거지. 
+		 * 해당 포지션으로 이동할 수 있는지  Empty상태인지를 Board에서 확인. 
 		 */
-		boolean answer = board.checkToMove(temp_position);
+		boolean answer = board.checkToMove(position);
 		if(answer == true) {
 			return true;
 		}
 		else return false;
 	}
-
+	
+	/*
+	 * 각 미노들의 Board내에서의 position을 반환. 
+	 * 
+	 * 반환값: 
+	 * position[a][b]
+	 * a: baseMino number
+	 * b: x,y좌표
+	 * 	b == 0: x좌표
+	 * 	b == 1: y좌표
+	 * 
+	 * ex) position[2][1] == 3번째 BaseMino의 Board에서의 y좌표.  
+	 */
+	public int[][] getPosition(int x, int y, int rotate){
+		int[][] baseMinoPosition = new int[4][2];
+		baseMinoPosition = type.getBaseMinoRelativePosition(this.getType(), rotate);
+		
+		int [][] position = new int[4][2];
+		for(int i = 0; i < 4; i++) {
+			position[i][0] = x + baseMinoPosition[i][0];
+			position[i][1] = y + baseMinoPosition[i][1];
+		}
+		return position;
+	}
 }
