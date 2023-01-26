@@ -11,7 +11,7 @@ public class Main {
 	public static final int OTHER_BOARD_BLOCK_SIZE = 20;
 	
 	public static void main(String[]args) {
-		Initilization init = new Initilization();
-		
+		Control control = new Control();
+		control.gameStart();	
 	}
 }

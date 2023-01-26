@@ -12,12 +12,12 @@ import Mino.MinoType;
 public class NextMinoBoard extends JPanel{
 	int height;
 	int width;
-	JPanel board;
+	JPanel gameBoard;
 	Mino[][] nextMinoList;
 	int index;
 	
 	public NextMinoBoard(JPanel board) {
-		this.board = board;
+		this.gameBoard = board;
 		setVisible(true);
 		width = OTHER_BOARD_BLOCK_SIZE * 6;
 		height = OTHER_BOARD_BLOCK_SIZE * 4 * 6;

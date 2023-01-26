@@ -10,12 +10,13 @@ import Mino.Mino;
 import Mino.MinoType;
 import static Tetris.Main.*;
 
-public class Board extends JPanel{
+public class GameBoard extends JPanel{
 	private block[][] board;//게임보드
 	private int topY;// 현재 가장 높이 쌓인 블록의 위치.
 
 	
-	public Board() {
+	public GameBoard() {
+		super();
 		setVisible(true);
 		setSize(BLOCK_SIZE * BOARD_WIDTH, BLOCK_SIZE * BOARD_HEIGHT);
 		setBounds(BOARD_START_WIDTH,BOARD_START_HEIGHT,getWidth(),getHeight());

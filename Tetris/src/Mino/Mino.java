@@ -3,7 +3,7 @@ package Mino;
 import javax.swing.JPanel;
 import static Tetris.Main.*;
 
-import Board.Board;
+import Board.GameBoard;
 
 /*
  * Mino는 baseMino 4개로 구성된다. 
@@ -137,13 +137,13 @@ public class Mino {
 	 * BaseMino들의 위치를 Board기준의 x,y좌표로 변환 후, board의 checkToMove()함수를 호출해 해당 위치로 이동할 수 있는지 여부를 체크. 
 	 * 이동할 수 있으면 true를, 없으면 false를 반환. 
 	 */
-	public boolean checkToMove(Board board, int x, int y, int rotate){
+	public boolean checkToMove(GameBoard gameBoard, int x, int y, int rotate){
 		int [][] position = getPosition(x,y,rotate);
 		
 		/*
 		 * 해당 포지션으로 이동할 수 있는지  Empty상태인지를 Board에서 확인. 
 		 */
-		boolean answer = board.checkToMove(position);
+		boolean answer = gameBoard.checkToMove(position);
 		if(answer == true) {
 			return true;
 		}

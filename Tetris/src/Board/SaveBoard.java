@@ -11,7 +11,7 @@ public class SaveBoard extends JPanel{
 	int height;
 	int width;
 	boolean isSaved;
-	JPanel board;
+	JPanel gameBoard;
 	Mino mino;
 	public SaveBoard(JPanel board) {
 		setVisible(true);
@@ -20,7 +20,7 @@ public class SaveBoard extends JPanel{
 		setSize(width,height);
 		setBounds(BOARD_START_WIDTH - OTHER_BOARD_BLOCK_SIZE * 8, BOARD_START_HEIGHT, getWidth(),getHeight());
 		isSaved = false;
-		this.board = board;
+		this.gameBoard = board;
 	}
 	
 	public void paintComponent(Graphics g) {
@@ -33,7 +33,7 @@ public class SaveBoard extends JPanel{
 	public Mino save(Mino mino) {
 		Mino returnMino = null;
 		
-		mino.removeMinoFromBoard(board);
+		mino.removeMinoFromBoard(gameBoard);
 		if(isSaved == true) {
 			this.mino.removeMinoFromBoard(this);
 		}

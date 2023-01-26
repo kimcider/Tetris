@@ -13,7 +13,7 @@ import Mino.WallKick;
 import Board.*;
 
 public class Control extends JFrame{
-	private Board board;
+	private GameBoard gameBoard;
 	private Mino mino;
 	private NextMinoBoard nextMinoBoard;
 	private SaveBoard saveBoard;
@@ -49,7 +49,8 @@ public class Control extends JFrame{
 			g.fillRect(0, 0, FRAME_WIDTH, FRAME_HEIGHT);
 			g.setColor(Color.BLACK);
 			g.setFont(new Font("Serif", Font.PLAIN, 50));
-			g.drawString(String.valueOf("점수: "+score),getWidth()/2, getHeight()/2);
+			g.drawString("Score is ", getWidth()/2 - 180, getHeight()/2);
+			g.drawString(String.valueOf(score),getWidth()/2, getHeight()/2);
 		}
 	}
 	
@@ -66,24 +67,24 @@ public class Control extends JFrame{
 		saveMinoFlag = false;
 		endFlag = false;
 		
-		board = new Board();
-		nextMinoBoard = new NextMinoBoard(board);
-		saveBoard = new SaveBoard(board);
+		gameBoard = new GameBoard();
+		nextMinoBoard = new NextMinoBoard(gameBoard);
+		saveBoard = new SaveBoard(gameBoard);
 		scoreBoard = new ScoreBoard();
 
-		add(board);
+		add(gameBoard);
 		add(nextMinoBoard);
 		add(saveBoard);
 		add(scoreBoard);
 		
 		revalidate();
-		board.repaint();
+		gameBoard.repaint();
 		nextMinoBoard.repaint();
 		saveBoard.repaint();
 		scoreBoard.repaint();
 		
 		mino = nextMinoBoard.getMino();
-		mino.addMinoToBoard(board,x,y);
+		mino.addMinoToBoard(gameBoard,x,y);
 
 		timer = new Timer();
 		timer.run();
@@ -91,13 +92,13 @@ public class Control extends JFrame{
 	
 	public void gameEnd() {
 		timer.stopTimer();
-		remove(board);
+		remove(gameBoard);
 		remove(nextMinoBoard);
 		remove(saveBoard);
 		revalidate();
 		repaint();
 		
-		board = null;
+		gameBoard = null;
 		nextMinoBoard = null;
 		saveBoard = null;
 		
@@ -115,9 +116,9 @@ public class Control extends JFrame{
 	public void changeMino() {
 		x = xInitValue;
 		y = yInitValue;
-		mino.removeMinoFromBoard(board);
+		mino.removeMinoFromBoard(gameBoard);
 		mino = nextMinoBoard.getMino();
-		mino.addMinoToBoard(board,x,y);
+		mino.addMinoToBoard(gameBoard,x,y);
 		saveMinoFlag = false;
 		movedFlag = false;
 	}
@@ -137,18 +138,18 @@ public class Control extends JFrame{
 				mino = nextMinoBoard.getMino();
 				this.x = xInitValue;
 				this.y = yInitValue;
-				mino.addMinoToBoard(board, this.x, this.y);
+				mino.addMinoToBoard(gameBoard, this.x, this.y);
 			}else {
 				this.x = xInitValue;
 				this.y = yInitValue;
-				mino.addMinoToBoard(board, this.x, this.y);
+				mino.addMinoToBoard(gameBoard, this.x, this.y);
 			}
 			saveMinoFlag = true;
 		}
 	}
 	
 	public boolean moveMino(Mino mino, int x, int y, int xVector, int yVector) {
-		boolean answer = mino.checkToMove(board, x + xVector, y + yVector, mino.getRotation());
+		boolean answer = mino.checkToMove(gameBoard, x + xVector, y + yVector, mino.getRotation());
 		if(answer == true) {
 			this.x = x + xVector;
 			this.y = y + yVector;
@@ -164,7 +165,7 @@ public class Control extends JFrame{
 					gameEnd();
 					return false;
 				}
-				int erasedLineCounter = board.stack(mino, x, y, mino.getRotation());
+				int erasedLineCounter = gameBoard.stack(mino, x, y, mino.getRotation());
 				changeMino();
 				lineErased(erasedLineCounter);
 				
@@ -227,7 +228,7 @@ public class Control extends JFrame{
 			
 			boolean answer;		
 			if(rotate == 1) {
-				answer  = mino.checkToMove(board, x, y, (mino.getRotation() + 1) % 4);
+				answer  = mino.checkToMove(gameBoard, x, y, (mino.getRotation() + 1) % 4);
 				if(answer == true) {
 					mino.rotate(x, y, 1);
 					this.x = x;
@@ -235,7 +236,7 @@ public class Control extends JFrame{
 					return;
 				}
 			}else {
-				answer = mino.checkToMove(board, x, y, (mino.getRotation() + 4 - 1) % 4);
+				answer = mino.checkToMove(gameBoard, x, y, (mino.getRotation() + 4 - 1) % 4);
 				if(answer == true) {
 					mino.rotate(x, y, -1);
 					this.x = x;

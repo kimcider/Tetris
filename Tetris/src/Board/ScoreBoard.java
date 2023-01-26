@@ -17,7 +17,6 @@ public class ScoreBoard extends JPanel{
 	int height;
 	int width;
 	boolean isSaved;
-	JPanel board;
 	Mino mino;
 	int score;
 	public ScoreBoard() {
