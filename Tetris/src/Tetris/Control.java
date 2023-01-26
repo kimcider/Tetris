@@ -3,6 +3,7 @@ package Tetris;
 import javax.swing.JFrame;
 import java.awt.Graphics;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
@@ -16,50 +17,96 @@ public class Control extends JFrame{
 	private Mino mino;
 	private NextMinoBoard nextMinoBoard;
 	private SaveBoard saveBoard;
-	int x;
-	int y;
-	int xInitValue;
-	int yInitValue;
+	private ScoreBoard scoreBoard;
+	private Timer  timer;
+	private int x;
+	private int y;
+	private int xInitValue;
+	private int yInitValue;
+	private int erasedLine;
+	private int score;
 	
-	boolean saveMinoFlag;
-	
+	private boolean saveMinoFlag;
+	private boolean movedFlag;
+	private boolean endFlag;
 	public Control() {
 		setLayout(null);
 		setSize(FRAME_WIDTH,FRAME_HEIGHT);
 		setVisible(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		addKeyListener(new KeyboardListener());
-		xInitValue = 5;
-		yInitValue = 0;
-		x = xInitValue;
-		y = yInitValue;
-		
-		saveMinoFlag = false;
+		endFlag = false;
 	}
 	
-	public void paintComponent(Graphics g) {
-		g.setColor(Color.green);
-		g.fillRect(0, 0, FRAME_WIDTH, FRAME_HEIGHT);
+	public void paint(Graphics g) {
+		if(endFlag == false) {
+			g.setColor(Color.green);
+			g.fillRect(0, 0, FRAME_WIDTH, FRAME_HEIGHT);
+			g.setColor(Color.blue);
+			g.fillRect(BOARD_START_WIDTH - 10, BOARD_START_HEIGHT + 15, BLOCK_SIZE * BOARD_WIDTH + 20, BLOCK_SIZE * BOARD_HEIGHT + 25);	
+		}else {
+			g.setColor(Color.gray);
+			g.fillRect(0, 0, FRAME_WIDTH, FRAME_HEIGHT);
+			g.setColor(Color.BLACK);
+			g.setFont(new Font("Serif", Font.PLAIN, 50));
+			g.drawString(String.valueOf("점수: "+score),getWidth()/2, getHeight()/2);
+		}
 	}
 	
 	/*
 	 * 게임 진행
 	 */
-	public void start() {
-		board = new Board();
-		add(board);
-
-		nextMinoBoard = new NextMinoBoard(board);
-		add(nextMinoBoard);
+	public void gameStart() {
+		score = 0;
+		xInitValue = 5;
+		yInitValue = 0;
+		x = xInitValue;
+		y = yInitValue;
+		erasedLine = 1;
+		saveMinoFlag = false;
+		endFlag = false;
 		
+		board = new Board();
+		nextMinoBoard = new NextMinoBoard(board);
 		saveBoard = new SaveBoard(board);
+		scoreBoard = new ScoreBoard();
+
+		add(board);
+		add(nextMinoBoard);
 		add(saveBoard);
+		add(scoreBoard);
+		
+		revalidate();
+		board.repaint();
+		nextMinoBoard.repaint();
+		saveBoard.repaint();
+		scoreBoard.repaint();
 		
 		mino = nextMinoBoard.getMino();
 		mino.addMinoToBoard(board,x,y);
-		
-		
+
+		timer = new Timer();
+		timer.run();
+	}
+	
+	public void gameEnd() {
+		timer.stopTimer();
+		remove(board);
+		remove(nextMinoBoard);
+		remove(saveBoard);
+		revalidate();
 		repaint();
+		
+		board = null;
+		nextMinoBoard = null;
+		saveBoard = null;
+		
+		timer = null; 
+		endFlag = true;
+	}
+
+	public Mino getMino() {
+		return mino;
 	}
 	
 	/*
@@ -72,6 +119,7 @@ public class Control extends JFrame{
 		mino = nextMinoBoard.getMino();
 		mino.addMinoToBoard(board,x,y);
 		saveMinoFlag = false;
+		movedFlag = false;
 	}
 
 	
@@ -80,20 +128,20 @@ public class Control extends JFrame{
 	 * 
 	 * savedMinoFlag는 changMino()시에만 false로 바뀜을 주의하라.
 	 */
-	public void saveMino(Mino target) {
-		target.setRotate(0);
+	public void saveMino(Mino target, int x, int y) {
+		target.setRotate(0, x, y);
 		if(saveMinoFlag == false) {
 			mino = saveBoard.save(mino);
 			
 			if(mino == null) {
 				mino = nextMinoBoard.getMino();
-				x = xInitValue;
-				y = yInitValue;
-				mino.addMinoToBoard(board, x, y);
+				this.x = xInitValue;
+				this.y = yInitValue;
+				mino.addMinoToBoard(board, this.x, this.y);
 			}else {
-				x = xInitValue;
-				y = yInitValue;
-				mino.addMinoToBoard(board, x, y);
+				this.x = xInitValue;
+				this.y = yInitValue;
+				mino.addMinoToBoard(board, this.x, this.y);
 			}
 			saveMinoFlag = true;
 		}
@@ -105,9 +153,25 @@ public class Control extends JFrame{
 			this.x = x + xVector;
 			this.y = y + yVector;
 			mino.setPosition(this.x , this.y);
+			movedFlag = true;
 			return true;
+		}else {
+			if(yVector == 1) {
+				if(movedFlag == false) {
+					/*
+					 * 게임종료 
+					 */
+					gameEnd();
+					return false;
+				}
+				int erasedLineCounter = board.stack(mino, x, y, mino.getRotation());
+				changeMino();
+				lineErased(erasedLineCounter);
+				
+			}
+			return false;	
 		}
-		return false;
+		
 	}
 	
 	/*
@@ -183,6 +247,41 @@ public class Control extends JFrame{
 		}
 
 	}
+	
+	
+	/*
+	 * line이 지워졌을 때의 부수작업들을 수행.
+	 *	ex) 점수계산, 게임 속도 증가 
+	 */
+	public void lineErased(int erasedLineCounter) {
+		timer.speedUp(erasedLineCounter);
+		score = score + (erasedLineCounter * erasedLineCounter) * 100;
+		scoreBoard.setScore(score);
+		scoreBoard.repaint();
+	}
+	
+	class Timer extends Thread{
+		double interval = 1.0;
+		boolean flag = true;
+		public void stopTimer() {
+			flag = false;
+		}
+		public void run() {
+			while(flag) {
+				try {
+					sleep((long)(1000/interval));
+					if(flag) {
+						moveMino(mino, x, y, 0, 1);
+					}
+				}catch(InterruptedException e) {
+					
+				}
+			}
+		}
+		public void speedUp(int num) {
+			interval = interval + (0.1 * num);
+		}
+	}
 	class KeyboardListener implements KeyListener{
 		public void keyPressed(KeyEvent e) {
 			//move right
@@ -195,11 +294,11 @@ public class Control extends JFrame{
 			}
 			
 			//right rotate
-			else if(e.getKeyCode() == KeyEvent.VK_UP || e.getKeyChar() == 'ㅌ' || e.getKeyChar() == 'X' || e.getKeyChar() == 'x') {
+			else if(e.getKeyCode() == KeyEvent.VK_UP || e.getKeyChar() == 'X' || e.getKeyChar() == 'x') {
 				rotateMino(mino, x, y, 1);
 			}
 			//left rotate
-			else if(e.getKeyCode() == KeyEvent.VK_CONTROL || e.getKeyChar() == 'ㅋ' || e.getKeyChar() == 'Z' || e.getKeyChar() == 'z') {
+			else if(e.getKeyCode() == KeyEvent.VK_CONTROL || e.getKeyChar() == 'Z' || e.getKeyChar() == 'z') {
 				rotateMino(mino, x, y, 0);
 			}
 			
@@ -211,13 +310,19 @@ public class Control extends JFrame{
 			//quick move down
 			else if(e.getKeyCode() == KeyEvent.VK_SPACE) {
 				moveMinoToBottom(mino, x, y);
-				board.stack(mino, x, y, mino.getRotation());
-				changeMino();
 			}
 			
 			//save mino
-			else if( e.getKeyCode() == KeyEvent.VK_SHIFT || e.getKeyChar() == 'ㅊ'|| e.getKeyChar() == 'C' || e.getKeyChar() == 'c' ){
-				saveMino(mino);
+			else if( e.getKeyCode() == KeyEvent.VK_SHIFT || e.getKeyChar() == 'C' || e.getKeyChar() == 'c' ){
+				saveMino(mino, x, y);
+			}
+			
+			else if(e.getKeyChar() == 'e' || e.getKeyChar() == 'E') {
+				gameEnd();
+			}
+			
+			else if(e.getKeyChar() == 'r' || e.getKeyChar() == 'R') {
+				//gameStart();
 			}
 		}
 		public void keyReleased(KeyEvent e) {

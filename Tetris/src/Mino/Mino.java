@@ -127,8 +127,10 @@ public class Mino {
 		return rotation;
 	}
 	
-	public void setRotate(int rotate) {
-		this.rotation = rotate;
+	public void setRotate(int rotate, int x, int y) {
+		while(rotation != rotate) {
+			rotate(x, y, 1);
+		}
 	}
 	
 	/*
@@ -136,14 +138,6 @@ public class Mino {
 	 * 이동할 수 있으면 true를, 없으면 false를 반환. 
 	 */
 	public boolean checkToMove(Board board, int x, int y, int rotate){
-//		int[][] position = new int[4][2];
-//		position = type.getPosition(this.getType(), rotate);
-//		int[][] temp_position = new int[4][2];
-//		for(int i = 0; i < 4; i++) {
-//			temp_position[i][0] = x + position[i][0];
-//			temp_position[i][1] = y + position[i][1];
-//		}
-		
 		int [][] position = getPosition(x,y,rotate);
 		
 		/*

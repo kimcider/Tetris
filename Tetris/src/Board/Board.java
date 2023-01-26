@@ -12,7 +12,8 @@ import static Tetris.Main.*;
 
 public class Board extends JPanel{
 	private block[][] board;//게임보드
-	int topY;// 현재 가장 높이 쌓인 블록의 위치.
+	private int topY;// 현재 가장 높이 쌓인 블록의 위치.
+
 	
 	public Board() {
 		setVisible(true);
@@ -76,7 +77,9 @@ public class Board extends JPanel{
 	/*
 	 * mino를 board에 확정시키는 작업.
 	 */
-	public void stack(Mino mino, int x, int y, int rotate) {
+	private int erasedLineCounter;
+	public int stack(Mino mino, int x, int y, int rotate) {
+		erasedLineCounter = 0;
 		int position[][] = mino.getPosition(x, y, rotate);
 		
 		int boardX;
@@ -99,7 +102,7 @@ public class Board extends JPanel{
 			topY = listLine.get(0);
 		}
 		lineFull(listLine);
-		System.out.println("topY: "+topY);
+		return erasedLineCounter;
 	}
 	
 	/*
@@ -108,7 +111,6 @@ public class Board extends JPanel{
 	 * 	stack함수시 stack된 라인에서 발동. 
 	 */
 	public void lineFull(ArrayList<Integer> list) {
-		System.out.println("lineFull(). list: "+list);
 		int beforeNumber = -99; 
 		for(int i = 0; i < list.size(); i++) {
 			int number = list.get(i);
@@ -126,6 +128,7 @@ public class Board extends JPanel{
 				
 				if(state == true) {
 					eraseLine(number);
+					erasedLineCounter++;
 				}	
 				beforeNumber = number;
 			}
@@ -135,8 +138,6 @@ public class Board extends JPanel{
 	 * 	lineFull()함수가 full일경우 발동. 
 	 */
 	public void eraseLine(int targetY) {
-		System.out.println("targetY: "+targetY);
-		System.out.println("before topY " + topY);
 		for(int i = 0; i < BOARD_WIDTH; i++) {
 			board[i][targetY].setType(MinoType.EMPTY);
 		}
@@ -154,7 +155,6 @@ public class Board extends JPanel{
 			board[i][topY].setType(MinoType.EMPTY);
 		}
 		topY = topY + 1;
-		System.out.println("after topY: "+topY);
 		repaint();
 	}
 }
