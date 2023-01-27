@@ -3,36 +3,32 @@ package Mino;
 import java.awt.Color;
 
 public enum MinoType {
-	EMPTY(Color.black, MinoPosition.EmptyPosition()),
-	I_Mino(new Color(00,255,255), MinoPosition.I_MinoPosition()),
-	O_Mino(Color.yellow, MinoPosition.O_MinoPosition()),
-	Z_Mino(Color.red, MinoPosition.Z_MinoPosition()),
-	S_Mino(new Color(173,255,47), MinoPosition.S_MinoPosition()),
-	J_Mino(Color.blue, MinoPosition.J_MinoPosition()),
-	L_Mino(Color.orange, MinoPosition.L_MinoPosition()),
-	T_Mino(Color.magenta, MinoPosition.T_MinoPosition());
+	EMPTY(Color.black, MinoRelativePosition.EmptyPosition()),
+	I_Mino(new Color(0,255,255), MinoRelativePosition.I_MinoPosition()),
+	O_Mino(Color.yellow, MinoRelativePosition.O_MinoPosition()),
+	Z_Mino(Color.red, MinoRelativePosition.Z_MinoPosition()),
+	S_Mino(new Color(173,255,47), MinoRelativePosition.S_MinoPosition()),
+	J_Mino(Color.blue, MinoRelativePosition.J_MinoPosition()),
+	L_Mino(Color.orange, MinoRelativePosition.L_MinoPosition()),
+	T_Mino(Color.magenta, MinoRelativePosition.T_MinoPosition());
 	
-	
-	/* Mino의 색은 임의로 지정한다.*/
 	final private Color color;
-	/* Mino의 각 BaseMino의 position은 아래 MinoPosition class에서 받아온다.*/
-	final int[][][] position;
+	final int[][][] relativePosiion;
 	
 	private MinoType(Color color,int[][][] position) {
 		this.color = color;
-		this.position = position;
+		this.relativePosiion = position;
 	}
 	public Color getColor() {
 		return color;
 	}
-	public int[][] getBaseMinoRelativePosition(MinoType type,int num){
-		return type.position[num];
+	public int[][] getBaseMinoRelativePosition(MinoType type,int rotate){
+		return type.relativePosiion[rotate];
 	}
 }
 
-
 /*
- * Mino의 각 rotation별로의 BaseMino들의 위치.
+ * Mino의 각 rotation별로의 BaseMino들의 상대적 위치.
  *
  * position[a][b][c]. 
  * a: rotation number
@@ -44,7 +40,7 @@ public enum MinoType {
  * 
  * 		ex) position[2][2][1]: 2번째 rotation미노의 2번째블록의 Width(x좌표). 
  */
-class MinoPosition{
+class MinoRelativePosition{
 	public static int[][][] EmptyPosition(){
 		return new int[4][4][2];
 	}

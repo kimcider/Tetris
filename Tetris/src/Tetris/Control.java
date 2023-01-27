@@ -13,29 +13,33 @@ import Mino.WallKick;
 import Board.*;
 
 public class Control extends JFrame{
+	private static final int RIGHT = 1;
+	private static final int LEFT = -1;
+	private static final int HOLD = 0;
+	private static final int DOWN = 1;
+
+	
 	private GameBoard gameBoard;
 	private Mino mino;
 	private NextMinoBoard nextMinoBoard;
 	private SaveBoard saveBoard;
 	private ScoreBoard scoreBoard;
 	private Timer  timer;
-	private int x;
-	private int y;
+	private int xPosition;
+	private int yPosition;
 	private int xInitValue;
 	private int yInitValue;
-	private int erasedLine;
 	private int score;
-	
 	private boolean saveMinoFlag;
 	private boolean movedFlag;
 	private boolean endFlag;
+	
 	public Control() {
 		setLayout(null);
 		setSize(FRAME_WIDTH,FRAME_HEIGHT);
 		setVisible(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		addKeyListener(new KeyboardListener());
-		endFlag = false;
 	}
 	
 	public void paint(Graphics g) {
@@ -54,16 +58,12 @@ public class Control extends JFrame{
 		}
 	}
 	
-	/*
-	 * 게임 진행
-	 */
 	public void gameStart() {
 		score = 0;
 		xInitValue = 5;
 		yInitValue = 0;
-		x = xInitValue;
-		y = yInitValue;
-		erasedLine = 1;
+		xPosition = xInitValue;
+		yPosition = yInitValue;
 		saveMinoFlag = false;
 		endFlag = false;
 		
@@ -77,14 +77,13 @@ public class Control extends JFrame{
 		add(saveBoard);
 		add(scoreBoard);
 		
-		revalidate();
 		gameBoard.repaint();
 		nextMinoBoard.repaint();
 		saveBoard.repaint();
 		scoreBoard.repaint();
 		
 		mino = nextMinoBoard.getMino();
-		mino.addMinoToBoard(gameBoard,x,y);
+		mino.addMinoToGameBoard(gameBoard,xPosition,yPosition);
 
 		timer = new Timer();
 		timer.run();
@@ -101,159 +100,27 @@ public class Control extends JFrame{
 		gameBoard = null;
 		nextMinoBoard = null;
 		saveBoard = null;
-		
 		timer = null; 
+		
 		endFlag = true;
 	}
-
-	public Mino getMino() {
-		return mino;
+	
+	public void stackMinoToGameBoard(Mino mino) {
+		int erasedLineCounter = gameBoard.stackMinoToBoard(mino, xPosition, yPosition, mino.getRotation());
+		changeMino();
+		lineErased(erasedLineCounter);
 	}
 	
-	/*
-	 * 현재의 mino를 제거하고 새로운 mino를 받아온다. 
-	 */
 	public void changeMino() {
-		x = xInitValue;
-		y = yInitValue;
+		xPosition = xInitValue;
+		yPosition = yInitValue;
 		mino.removeMinoFromBoard(gameBoard);
 		mino = nextMinoBoard.getMino();
-		mino.addMinoToBoard(gameBoard,x,y);
+		mino.addMinoToGameBoard(gameBoard,xPosition,yPosition);
 		saveMinoFlag = false;
 		movedFlag = false;
 	}
-
 	
-	/*
-	 * 미노를 세이브한다. 
-	 * 
-	 * savedMinoFlag는 changMino()시에만 false로 바뀜을 주의하라.
-	 */
-	public void saveMino(Mino target, int x, int y) {
-		target.setRotate(0, x, y);
-		if(saveMinoFlag == false) {
-			mino = saveBoard.save(mino);
-			
-			if(mino == null) {
-				mino = nextMinoBoard.getMino();
-				this.x = xInitValue;
-				this.y = yInitValue;
-				mino.addMinoToBoard(gameBoard, this.x, this.y);
-			}else {
-				this.x = xInitValue;
-				this.y = yInitValue;
-				mino.addMinoToBoard(gameBoard, this.x, this.y);
-			}
-			saveMinoFlag = true;
-		}
-	}
-	
-	public boolean moveMino(Mino mino, int x, int y, int xVector, int yVector) {
-		boolean answer = mino.checkToMove(gameBoard, x + xVector, y + yVector, mino.getRotation());
-		if(answer == true) {
-			this.x = x + xVector;
-			this.y = y + yVector;
-			mino.setPosition(this.x , this.y);
-			movedFlag = true;
-			return true;
-		}else {
-			if(yVector == 1) {
-				if(movedFlag == false) {
-					/*
-					 * 게임종료 
-					 */
-					gameEnd();
-					return false;
-				}
-				int erasedLineCounter = gameBoard.stack(mino, x, y, mino.getRotation());
-				changeMino();
-				lineErased(erasedLineCounter);
-				
-			}
-			return false;	
-		}
-		
-	}
-	
-	/*
-	 * 현재의 미노를 맨 아래로 이동시킨다. 
-	 *
-	 */
-	public void moveMinoToBottom(Mino mino, int x, int y) {
-		boolean result = true;
-		while(result) {
-			result = moveMino(mino, this.x, this.y, 0, 1);
-		}
-	}
-	
-	
-	/*
-	 * Mino를 회전시킨다. 
-	 * 
-	 * mino: 회전시킬 미노 
-	 * 
-	 * x: mino의 현재 x좌표
-	 * y: mino의 현재 y좌표 
-	 * 
-	 * rotate == 1 : right rotate
-	 * rotate == 0 : left rotate
-	 *  
-	 */
-	public void rotateMino(Mino mino, int x, int y, int rotate) {
-		int[][] offset;
-		int originalX = x;
-		int originalY = y;
-		
-		/*
-		 * WallKick.getOffset(type, rotation, direction)
-		 * diretion == 0 : right rotation
-		 * direction == 1 : left rotation
-		 */
-		if(rotate == 1) {
-			offset = WallKick.getOffset(mino.getType(), mino.getRotation(), 0);
-		}
-		else {
-			offset = WallKick.getOffset(mino.getType(), mino.getRotation(), 1);
-		}
-		
-		/*
-		 * WallKick의 5가지 offset을 각각체크
-		 */
-		for(int i = 0; i < 5; i++) {	
-			int offsetX = offset[i][0];
-			int offsetY = -offset[i][1];
-			
-			x = originalX + offsetX;
-			y = originalY + offsetY;
-			
-			boolean answer;		
-			if(rotate == 1) {
-				answer  = mino.checkToMove(gameBoard, x, y, (mino.getRotation() + 1) % 4);
-				if(answer == true) {
-					mino.rotate(x, y, 1);
-					this.x = x;
-					this.y = y;
-					return;
-				}
-			}else {
-				answer = mino.checkToMove(gameBoard, x, y, (mino.getRotation() + 4 - 1) % 4);
-				if(answer == true) {
-					mino.rotate(x, y, -1);
-					this.x = x;
-					this.y = y;
-					return;
-				}
-			}
-
-		}
-
-	}
-	
-	
-	/*
-	 * line이 지워졌을 때의 부수작업들을 수행.
-	 *	ex) 점수계산, 게임 속도 증가 
-	 */
 	public void lineErased(int erasedLineCounter) {
 		timer.speedUp(erasedLineCounter);
 		score = score + (erasedLineCounter * erasedLineCounter) * 100;
@@ -261,69 +128,144 @@ public class Control extends JFrame{
 		scoreBoard.repaint();
 	}
 	
-	class Timer extends Thread{
-		double interval = 1.0;
-		boolean flag = true;
-		public void stopTimer() {
-			flag = false;
+	public void saveMino(Mino target, int x, int y) {
+		if(saveMinoFlag == false) {
+			target.setRotate(0, x, y);
+			mino = saveBoard.saveMino(mino);
+			
+			if(mino == null) {
+				mino = nextMinoBoard.getMino();
+			}
+			
+			xPosition = xInitValue;
+			yPosition = yInitValue;
+			mino.addMinoToGameBoard(gameBoard, xPosition, yPosition);
+			
+			saveMinoFlag = true;
 		}
-		public void run() {
-			while(flag) {
-				try {
-					sleep((long)(1000/interval));
-					if(flag) {
-						moveMino(mino, x, y, 0, 1);
-					}
-				}catch(InterruptedException e) {
-					
+	}
+	
+	public boolean moveMino(Mino mino, int xVector, int yVector) {
+		boolean answer = mino.canMinoMove(gameBoard, xPosition + xVector, yPosition + yVector, mino.getRotation());
+		if(answer == true) {
+			xPosition = xPosition + xVector;
+			yPosition = yPosition + yVector;
+			mino.setBaseMinoBoundsForGameBoard(xPosition , yPosition);
+			movedFlag = true;
+		}else {
+			if(yVector == 1) {
+				if(movedFlag == false) {
+					gameEnd();
+				}
+				else {
+					stackMinoToGameBoard(mino);	
 				}
 			}
 		}
+		return answer;
+	}
+	
+	public void moveMinoToBottom(Mino mino) {
+		while(moveMino(mino, HOLD, DOWN));
+	}
+	
+	public void rotateMino(Mino mino, int x, int y, int rotate) {
+		int[][] rotationOffset;
+		int tempX;
+		int tempY;
+		
+		if(rotate == RIGHT) {
+			rotationOffset = WallKick.getRotationOffset(mino.getType(), mino.getRotation(), 0);
+		}
+		else {
+			rotationOffset = WallKick.getRotationOffset(mino.getType(), mino.getRotation(), 1);
+		}
+		
+		for(int i = 0; i < 5; i++) {	
+			int offsetX = rotationOffset[i][0];
+			int offsetY = -rotationOffset[i][1];
+			
+			tempX = x + offsetX;
+			tempY = y + offsetY;
+			
+			boolean answer;		
+			if(rotate == RIGHT) {
+				answer = mino.canMinoMove(gameBoard, tempX, tempY, (mino.getRotation() + 4 + RIGHT) % 4);
+			}else {
+				answer = mino.canMinoMove(gameBoard, tempX, tempY, (mino.getRotation() + 4 + LEFT) % 4);
+			}
+			if(answer == true) {
+				mino.rotateMino(tempX, tempY, rotate);
+				xPosition = tempX;
+				yPosition = tempY;
+				return;
+			}
+		}
+	}
+	
+	class Timer extends Thread{
+		double interval = 1.0;
+		boolean usingTimerFlag = true;
+		
+		public void run() {
+			while(usingTimerFlag) {
+				try {
+					sleep((long)(1000/interval));
+					if(usingTimerFlag) {
+						moveMino(mino, HOLD, DOWN);
+					}
+				}catch(InterruptedException e) {
+					;
+				}
+			}
+		}
+		
 		public void speedUp(int num) {
 			interval = interval + (0.1 * num);
 		}
+
+		public void stopTimer() {
+			usingTimerFlag = false;
+		}
 	}
+	
 	class KeyboardListener implements KeyListener{
 		public void keyPressed(KeyEvent e) {
 			//move right
 			if(e.getKeyCode() == KeyEvent.VK_RIGHT) {
-				moveMino(mino, x, y, 1, 0);
+				moveMino(mino, RIGHT, HOLD);
 			}
 			//move left
 			else if(e.getKeyCode() == KeyEvent.VK_LEFT) {
-				moveMino(mino, x, y, -1, 0);
+				moveMino(mino, LEFT, HOLD);
 			}
-			
 			//right rotate
 			else if(e.getKeyCode() == KeyEvent.VK_UP || e.getKeyChar() == 'X' || e.getKeyChar() == 'x') {
-				rotateMino(mino, x, y, 1);
+				rotateMino(mino, xPosition, yPosition, RIGHT);
 			}
 			//left rotate
 			else if(e.getKeyCode() == KeyEvent.VK_CONTROL || e.getKeyChar() == 'Z' || e.getKeyChar() == 'z') {
-				rotateMino(mino, x, y, 0);
+				rotateMino(mino, xPosition, yPosition, LEFT);
 			}
 			
 			//move down
 			else if(e.getKeyCode() == KeyEvent.VK_DOWN) {
-				moveMino(mino, x, y, 0, 1);
+				moveMino(mino, HOLD, DOWN);
 			}
 			
 			//quick move down
 			else if(e.getKeyCode() == KeyEvent.VK_SPACE) {
-				moveMinoToBottom(mino, x, y);
+				moveMinoToBottom(mino);
 			}
 			
 			//save mino
 			else if( e.getKeyCode() == KeyEvent.VK_SHIFT || e.getKeyChar() == 'C' || e.getKeyChar() == 'c' ){
-				saveMino(mino, x, y);
+				saveMino(mino, xPosition, yPosition);
 			}
 			
+			// game end
 			else if(e.getKeyChar() == 'e' || e.getKeyChar() == 'E') {
 				gameEnd();
-			}
-			
-			else if(e.getKeyChar() == 'r' || e.getKeyChar() == 'R') {
-				//gameStart();
 			}
 		}
 		public void keyReleased(KeyEvent e) {

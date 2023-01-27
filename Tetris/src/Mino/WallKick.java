@@ -14,7 +14,7 @@ package Mino;
  */
 
 public  class WallKick {
-	public static int[][] getOffset(MinoType type, int rotation, int direction){
+	public static int[][] getRotationOffset(MinoType type, int rotation, int direction){
 		switch (type) {
 		case O_Mino:
 			return new int[5][2];

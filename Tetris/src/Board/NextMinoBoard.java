@@ -10,11 +10,18 @@ import Mino.Mino;
 import Mino.MinoType;
 
 public class NextMinoBoard extends JPanel{
-	int height;
-	int width;
-	JPanel gameBoard;
-	Mino[][] nextMinoList;
-	int index;
+	private int height;
+	private int width;
+	private JPanel gameBoard;
+	private Mino[][] nextMinoList;
+	private int nextMinoIndex;
+	
+	public void paintComponent(Graphics g) {
+		g.setColor(Color.blue);
+		g.fillRect(0, 0, width, height);
+		g.setColor(Color.black);
+		g.fillRect(10, 10, width-20, height-20);
+	}
 	
 	public NextMinoBoard(JPanel board) {
 		this.gameBoard = board;
@@ -25,37 +32,13 @@ public class NextMinoBoard extends JPanel{
 		setBackground(Color.black);
 		setBounds(BOARD_START_WIDTH + BLOCK_SIZE * (BOARD_WIDTH + 1), BOARD_START_HEIGHT, getWidth(),getHeight());
 		
-		index = 0;
+		nextMinoIndex = 0;
 		nextMinoList = new Mino[2][7];
 		for(int i = 0; i < 2; i++) {
 			nextMinoList[i] = initMinoList();
 		}
 	}
-	public void paintComponent(Graphics g) {
-		g.setColor(Color.blue);
-		g.fillRect(0, 0, width, height);
-		g.setColor(Color.black);
-		g.fillRect(10, 10, width-20, height-20);
-		
-	}
 	
-	/*
-	 * minoList내의 mino들의 순서를 랜덤하게 섞는다.
-	 */
-	public static void randomizeMino(Mino[] ary) {
-		Random rd = new Random();
-		int length = ary.length;
-		for(int i = length - 1; i > 0; i--) {
-			int j = rd.nextInt(i + 1);
-			Mino temp = ary[i];
-			ary[i] = ary[j];
-			ary[j] = temp;
-		}
-	}
-	
-	/*
-	 * 다음 7개 미노리스트를 생성한 후, 그들의 순서를 섞는다.
-	 */
 	public Mino[] initMinoList() {
 		Mino[] minoList = new Mino[7];		
 		minoList[0] = new Mino(MinoType.I_Mino);
@@ -69,42 +52,50 @@ public class NextMinoBoard extends JPanel{
 		return minoList;
 	}
 	
-	/*
-	 * 다음 미노를 반환한다. 
-	 * 7개의 미노를 다 반환할 경우, 다음 미노리스트를 생성한다.
-	 */
+	public static void randomizeMino(Mino[] minoList) {
+		Random random = new Random();
+		int length = minoList.length;
+		for(int i = length - 1; i > 0; i--) {
+			int j = random.nextInt(i + 1);
+			Mino temp = minoList[i];
+			minoList[i] = minoList[j];
+			minoList[j] = temp;
+		}
+	}
+	
 	public Mino getMino() {
-		nextMinoList[0][index].removeMinoFromBoard(this);
-		Mino answer = nextMinoList[0][index];	
-		index = index + 1;
-		if(index == 7) {
-			index = 0;
+		nextMinoList[0][nextMinoIndex].removeMinoFromBoard(this);
+		MinoType answerType = nextMinoList[0][nextMinoIndex].getType();	
+		nextMinoIndex = nextMinoIndex + 1;
+		
+		if(nextMinoIndex == 7) {
+			nextMinoIndex = 0;
 			nextMinoList[0] = nextMinoList[1];		
 			nextMinoList[1] = initMinoList();
 		}
 		 
 		reorderNextMinoBoard();
-		Mino answerMino = new Mino(answer.getType());
+		Mino answerMino = new Mino(answerType);
 		return answerMino;
 	}
 	
 	public void reorderNextMinoBoard() {
-		int temp_index = index;
-		int list_index = 0;
+		int listNumber = 0;
+		int tempIndex = nextMinoIndex;
 		for(int i = 0; i < 6; i++) {
-			if(temp_index < 7) {
-				MinoType type = nextMinoList[list_index][temp_index].getType();
+			if(tempIndex < 7) {
+				MinoType type = nextMinoList[listNumber][tempIndex].getType();
 				if(type == MinoType.S_Mino || type == MinoType.I_Mino) {
-					nextMinoList[list_index][temp_index].addMinoToBoard(this, 3, 1, OTHER_BOARD_BLOCK_SIZE, i);
+					nextMinoList[listNumber][tempIndex].addMinoToOtherBoard(this, 3, 1, i);
 				}
 				else {
-					nextMinoList[list_index][temp_index].addMinoToBoard(this, 2, 1, OTHER_BOARD_BLOCK_SIZE, i);
+					nextMinoList[listNumber][tempIndex].addMinoToOtherBoard(this, 2, 1, i);
 				}
 			}
-			temp_index++;
-			if(temp_index == 7) {
-				temp_index = 0;
-				list_index = 1;
+			tempIndex++;
+			if(tempIndex == 7) {
+				tempIndex = 0;
+				listNumber = 1;
 			}
 		}
 	}

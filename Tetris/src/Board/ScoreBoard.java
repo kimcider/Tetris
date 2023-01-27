@@ -14,11 +14,12 @@ import javax.swing.JPanel;
 
 import Mino.Mino;
 public class ScoreBoard extends JPanel{
-	int height;
-	int width;
-	boolean isSaved;
-	Mino mino;
-	int score;
+	private int height;
+	private int width;
+	private boolean isSaved;
+	private Mino mino;
+	private int score;
+	
 	public ScoreBoard() {
 		setVisible(true);
 		width = OTHER_BOARD_BLOCK_SIZE * 9;

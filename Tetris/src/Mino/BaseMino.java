@@ -6,33 +6,32 @@ import static Tetris.Main.*;
 
 
 public class BaseMino extends JPanel{
-	Color color;
-	
-	int[] position = new int[2];
-	 /* 
-	 * position[0]은 baseMino의 Width를,
-	 * position[1]은 baseMino의 Height를 지칭한다.
+	private Color color;
+
+	/*
+	 * position[0]은 baseMino의 xPosition을,
+	 * position[1]은 baseMino의 yPosition을 지칭한다.
 	 */
+	private int[] position = new int[2];
+	
 	public BaseMino(MinoType type) {
 		setVisible(true);
 		setSize(BLOCK_SIZE,BLOCK_SIZE);
 		setBackground(type.getColor());
 	}
-	public void setPosition(int[] position) {
+	public void setRelativePosition(int[] position) {
 		this.position[0] = position[0];
 		this.position[1] = position[1];
 	}
-	public int[] getPosition() {
+	public int[] getRelativePosition() {
 		return position;
 	}
 	
-
-	/* X좌표 반환 */
-	public int getWidthPosition() { 
+	public int getRelativeXPosition() { 
 		return position[0];
 	}
-	/* Y좌표 반환 */
-	public int getHeightPosition() { 
+	
+	public int getRelativeYPosition() { 
 		return position[1];
 	}
 	

@@ -11,22 +11,21 @@ import Mino.MinoType;
 import static Tetris.Main.*;
 
 public class GameBoard extends JPanel{
-	private block[][] board;//게임보드
-	private int topY;// 현재 가장 높이 쌓인 블록의 위치.
-
+	private block[][] gameBoard;
+	private int stackedHighestY;
 	
 	public GameBoard() {
-		super();
 		setVisible(true);
 		setSize(BLOCK_SIZE * BOARD_WIDTH, BLOCK_SIZE * BOARD_HEIGHT);
 		setBounds(BOARD_START_WIDTH,BOARD_START_HEIGHT,getWidth(),getHeight());
-		board = new block[BOARD_WIDTH][BOARD_HEIGHT];
+		
+		gameBoard = new block[BOARD_WIDTH][BOARD_HEIGHT];
 		for(int i=0;i<BOARD_WIDTH;i++) {
 			for(int j=0;j<BOARD_HEIGHT;j++) {
-				board[i][j] = new block();
+				gameBoard[i][j] = new block();
 			}
 		}
-		topY = BOARD_HEIGHT + 10;
+		stackedHighestY = BOARD_HEIGHT +9999;
 	}
 	
 	public void paintComponent(Graphics g) {
@@ -34,7 +33,8 @@ public class GameBoard extends JPanel{
 		int x = 0;
 		for(int i = 0; i < BOARD_WIDTH; i++) {
 			for(int j = 0; j < BOARD_HEIGHT; j++) {
-				g.setColor(board[i][j].getType().getColor());
+				/* block 그리기 */
+				g.setColor(gameBoard[i][j].getType().getColor());
 				g.fillRect(x, y, BLOCK_SIZE, BLOCK_SIZE);
 
 				/* 격자 선그리기 */
@@ -47,17 +47,12 @@ public class GameBoard extends JPanel{
 		}
 	}
 
-	/*
-	 * 각 baseMino들이 요구한 위치에 그들을 위치시킬 수 있는지 여부를 파악. 
-	 * 모든 baseMino를 그들이 요구한 위치에 위치시킬 수 있다면 true를, 없다면 false를 반환. 
-	 */
-	public boolean checkToMove(int[][] position) {
-		boolean answer = true;
-		
-		int boardX;
-		int boardY;
-		for(int i = 0;i < 4; i++) {
 
+	public boolean canMinoMove(int[][] position) {
+		int boardXPosition;
+		int boardYPosition;
+		for(int i = 0;i < 4; i++) {
+			
 			if(position[i][0] >= BOARD_WIDTH || position[i][0] < 0) {
 				return false;
 			}
@@ -65,69 +60,56 @@ public class GameBoard extends JPanel{
 				return false;
 			}
 			
-			boardX = position[i][0];
-			boardY = position[i][1];
-			if(board[boardX][boardY].isFilled()) {
+			boardXPosition = position[i][0];
+			boardYPosition = position[i][1];
+			if(gameBoard[boardXPosition][boardYPosition].isFilled()) {
 				return false;
 			}
 		}
-		return answer;
+		return true;
 	}
 	
-	
-	/*
-	 * mino를 board에 확정시키는 작업.
-	 */
 	private int erasedLineCounter;
-	public int stack(Mino mino, int x, int y, int rotate) {
+	public int stackMinoToBoard(Mino mino, int x, int y, int rotate) {
 		erasedLineCounter = 0;
 		int position[][] = mino.getPosition(x, y, rotate);
 		
-		int boardX;
-		int boardY;
+		int xPosition;
+		int yPosition;
 
-		ArrayList<Integer> listLine = new ArrayList<>(Arrays.asList());
+		ArrayList<Integer> lines = new ArrayList<>(Arrays.asList());
 		
-		MinoType minoType = mino.getType();
 		for(int i = 0; i < 4; i++) {
-			boardX = position[i][0];
-			boardY = position[i][1];
-			board[boardX][boardY].setType(minoType);
-			listLine.add(boardY);
+			xPosition = position[i][0];
+			yPosition = position[i][1];
+			gameBoard[xPosition][yPosition].setType(mino.getType());
+			lines.add(yPosition);
 		}
 
-		listLine.sort(Comparator.naturalOrder());
+		lines.sort(Comparator.naturalOrder());
 		
-		if(listLine.get(0) < topY) { 
-			// 가장 높이 쌓인 블록위치 바꾸기. 
-			topY = listLine.get(0);
+		if(lines.get(0) < stackedHighestY) { 
+			stackedHighestY = lines.get(0);
 		}
-		lineFull(listLine);
+		checkIsLineFull(lines);
 		return erasedLineCounter;
 	}
 	
-	/*
-	 * TODO: lineFull()함수 
-	 * 
-	 * 	stack함수시 stack된 라인에서 발동. 
-	 */
-	public void lineFull(ArrayList<Integer> list) {
-		int beforeNumber = -99; 
+	public void checkIsLineFull(ArrayList<Integer> list) {
+		int beforeNumber = -9999; 
 		for(int i = 0; i < list.size(); i++) {
 			int number = list.get(i);
 			if(beforeNumber != number) {
-				boolean state = true;
+				boolean flagOfFullLine = true;
 				
 				for(int j = 0; j < BOARD_WIDTH; j++) {
-					if(board[j][number].isFilled() == true) {
-						continue;
-					}else {
-						state = false;
+					if(gameBoard[j][number].isFilled() == false) {
+						flagOfFullLine = false;
 						break;
 					}
 				}
 				
-				if(state == true) {
+				if(flagOfFullLine == true) {
 					eraseLine(number);
 					erasedLineCounter++;
 				}	
@@ -135,27 +117,17 @@ public class GameBoard extends JPanel{
 			}
 		}
 	}
-	/*
-	 * 	lineFull()함수가 full일경우 발동. 
-	 */
-	public void eraseLine(int targetY) {
-		for(int i = 0; i < BOARD_WIDTH; i++) {
-			board[i][targetY].setType(MinoType.EMPTY);
-		}
-		
-//		for(int y = targetY; y >= topY + 1; y--) {
-		for(int y = targetY; y >= topY + 1; y--) {
+
+	public void eraseLine(int targetLine) {
+		for(int y = targetLine; y >= stackedHighestY + 1; y--) {
 			for(int x = 0; x < BOARD_WIDTH; x++) {
-				/* 
-				 * TODO: 한쪽이 맥스까지 쌓여있어서 board[x][-1]에서 받아올 경우의 수 생각하기.  
-				 */
-				board[x][y].setType(board[x][y - 1].getType());
+				gameBoard[x][y].setType(gameBoard[x][y - 1].getType());
 			}
 		}
 		for(int i = 0; i < BOARD_WIDTH; i++) {
-			board[i][topY].setType(MinoType.EMPTY);
+			gameBoard[i][stackedHighestY].setType(MinoType.EMPTY);
 		}
-		topY = topY + 1;
+		stackedHighestY = stackedHighestY + 1;
 		repaint();
 	}
 }

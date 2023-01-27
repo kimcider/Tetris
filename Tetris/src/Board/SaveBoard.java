@@ -8,11 +8,12 @@ import Mino.Mino;
 import Mino.MinoType;
 
 public class SaveBoard extends JPanel{
-	int height;
-	int width;
-	boolean isSaved;
-	JPanel gameBoard;
-	Mino mino;
+	private int height;
+	private int width;
+	private boolean isSaved;
+	private JPanel gameBoard;
+	private Mino mino;
+	
 	public SaveBoard(JPanel board) {
 		setVisible(true);
 		width = OTHER_BOARD_BLOCK_SIZE * 6;
@@ -30,32 +31,31 @@ public class SaveBoard extends JPanel{
 		g.fillRect(10, 10, width - 20, height - 20);
 	}
 	
-	public Mino save(Mino mino) {
+	public Mino saveMino(Mino mino) {
 		Mino returnMino = null;
 		
 		mino.removeMinoFromBoard(gameBoard);
 		if(isSaved == true) {
 			this.mino.removeMinoFromBoard(this);
-		}
-		
-		if(isSaved == false) {
-			isSaved = true;
-			this.mino = mino;
-		}else {
+
 			returnMino = this.mino;
 			this.mino = mino;
 		}
-		
+		else {
+			isSaved = true;
+			this.mino = mino;
+		}
+
 		attach();
 		return returnMino;
 	}
 	
 	private void attach() {
 		if(mino.getType() == MinoType.S_Mino) {
-			mino.addMinoToBoard(this, 4, 2, OTHER_BOARD_BLOCK_SIZE, 0);
+			mino.addMinoToOtherBoard(this, 4, 2);
 		}
 		else{
-			mino.addMinoToBoard(this, 3, 2, OTHER_BOARD_BLOCK_SIZE, 0);
+			mino.addMinoToOtherBoard(this, 3, 2);
 		}
 	}
 }
