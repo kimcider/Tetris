@@ -33,6 +33,7 @@ public class Control extends JFrame{
 	private boolean saveMinoFlag;
 	private boolean movedFlag;
 	private boolean endFlag;
+	private boolean semaphore;
 	
 	public Control() {
 		setLayout(null);
@@ -66,6 +67,7 @@ public class Control extends JFrame{
 		yPosition = yInitValue;
 		saveMinoFlag = false;
 		endFlag = false;
+		semaphore = true;
 		
 		gameBoard = new GameBoard();
 		nextMinoBoard = new NextMinoBoard(gameBoard);
@@ -211,8 +213,10 @@ public class Control extends JFrame{
 			while(usingTimerFlag) {
 				try {
 					sleep((long)(1000/interval));
-					if(usingTimerFlag) {
+					if(usingTimerFlag && semaphore) {
+						semaphore = false;
 						moveMino(mino, HOLD, DOWN);
+						semaphore = true;
 					}
 				}catch(InterruptedException e) {
 					;
@@ -250,7 +254,12 @@ public class Control extends JFrame{
 			
 			//move down
 			else if(e.getKeyCode() == KeyEvent.VK_DOWN) {
-				moveMino(mino, HOLD, DOWN);
+				if(semaphore) {
+					semaphore = false;
+					moveMino(mino, HOLD, DOWN);
+					semaphore = true;
+				}
+				
 			}
 			
 			//quick move down
