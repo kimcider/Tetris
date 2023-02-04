@@ -12,7 +12,7 @@ import Mino.MinoType;
 public class NextMinoBoard extends JPanel{
 	private int height;
 	private int width;
-	private JPanel gameBoard;
+	private GameBoard gameBoard;
 	private Mino[][] nextMinoList;
 	private int nextMinoIndex;
 	
@@ -23,7 +23,7 @@ public class NextMinoBoard extends JPanel{
 		g.fillRect(10, 10, width-20, height-20);
 	}
 	
-	public NextMinoBoard(JPanel board) {
+	public NextMinoBoard(GameBoard board) {
 		this.gameBoard = board;
 		setVisible(true);
 		width = OTHER_BOARD_BLOCK_SIZE * 6;
@@ -41,13 +41,13 @@ public class NextMinoBoard extends JPanel{
 	
 	public Mino[] initMinoList() {
 		Mino[] minoList = new Mino[7];		
-		minoList[0] = new Mino(MinoType.I_Mino);
-		minoList[1] = new Mino(MinoType.O_Mino);
-		minoList[2] = new Mino(MinoType.S_Mino);
-		minoList[3] = new Mino(MinoType.Z_Mino);
-		minoList[4] = new Mino(MinoType.J_Mino);
-		minoList[5] = new Mino(MinoType.L_Mino);
-		minoList[6] = new Mino(MinoType.T_Mino);
+		minoList[0] = new Mino(gameBoard, MinoType.I_Mino);
+		minoList[1] = new Mino(gameBoard, MinoType.O_Mino);
+		minoList[2] = new Mino(gameBoard, MinoType.S_Mino);
+		minoList[3] = new Mino(gameBoard, MinoType.Z_Mino);
+		minoList[4] = new Mino(gameBoard, MinoType.J_Mino);
+		minoList[5] = new Mino(gameBoard, MinoType.L_Mino);
+		minoList[6] = new Mino(gameBoard, MinoType.T_Mino);
 		randomizeMino(minoList);
 		return minoList;
 	}
@@ -75,7 +75,7 @@ public class NextMinoBoard extends JPanel{
 		}
 		 
 		reorderNextMinoBoard();
-		Mino answerMino = new Mino(answerType);
+		Mino answerMino = new Mino(gameBoard, answerType);
 		return answerMino;
 	}
 	

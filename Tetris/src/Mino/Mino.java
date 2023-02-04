@@ -2,7 +2,7 @@ package Mino;
 
 import javax.swing.JPanel;
 import static Tetris.Main.*;
-
+import static Tetris.Control.*;
 import Board.GameBoard;
 
 /*
@@ -15,12 +15,18 @@ import Board.GameBoard;
  * Mino는 7개의 타입을 갖으며, 모든 타입의 미노는 각각 Mino는 4개의 회전 상태를 갖는다. 
  */
 public class Mino {
+	private GameBoard gameBoard;
 	private BaseMino[] mino = new BaseMino[4];
+	private int xPosition;
+	private int yPosition;
 	private int rotation;
 	private MinoType type;
 	
-	public Mino(MinoType type) {
+	public Mino(GameBoard gameBoard, MinoType type) {
+		this.gameBoard = gameBoard;
 		this.type = type;
+		xPosition = MINO_INITIAL_X_POSITION;
+		yPosition = MINO_INITIAL_Y_POSITION;
 		rotation = 0;
 		
 		int[][] relativePosition = MinoType.EMPTY.getBaseMinoRelativePosition(type,0);
@@ -38,6 +44,18 @@ public class Mino {
 		return type;
 	}
 	
+	public int getX() {
+		return xPosition;
+	}
+	public int getY() {
+		return yPosition;
+	}
+	public void setX(int x) {
+		xPosition = x;
+	}
+	public void setY(int y) {
+		yPosition = y;
+	}
 	/*
 	 * return position[a][b]
 	 * 	a: baseMino number
@@ -73,22 +91,18 @@ public class Mino {
 		}
 	}
 	
-	public void setRotate(int rotate, int x, int y) {
-		while(rotation != rotate) {
-			rotateMino(x, y, 1);
-		}
-	}
 	
-	
-	public void addMinoToGameBoard(JPanel gameBoard, int x, int y) {
-		setBaseMinoBoundsForGameBoard(x, y);
+	public void addMinoToGameBoard() {
+		setMinoPosition(MINO_INITIAL_X_POSITION, MINO_INITIAL_Y_POSITION);
 		for(int i = 0; i < 4; i++) {
 			gameBoard.add(getBaseMino(i));
 		}
 		gameBoard.repaint();
 	}
 
-	public void setBaseMinoBoundsForGameBoard(int x, int y) {
+	public void setMinoPosition(int x, int y) {
+		setX(x);
+		setY(y);
 		for(int i = 0; i < 4; i++) {
 			mino[i].setBounds(x * BLOCK_SIZE + mino[i].getRelativeXPosition() * BLOCK_SIZE + 1,y * BLOCK_SIZE + mino[i].getRelativeYPosition() * BLOCK_SIZE + 1, BLOCK_SIZE - 2,BLOCK_SIZE - 2);
 		}
@@ -126,8 +140,33 @@ public class Mino {
 		}
 	}
 
-	public boolean canMinoMove(GameBoard gameBoard, int x, int y, int rotate){
+	public boolean canMinoMove(int x, int y, int rotate){
 		int [][] baseMinoPositions = getPosition(x,y,rotate);
 		return gameBoard.canMinoMove(baseMinoPositions);
 	}
+	
+	public boolean moveMinoToRight() {
+		boolean isMinoMove = canMinoMove(xPosition + RIGHT, yPosition, rotation);
+		if(isMinoMove) {
+			setMinoPosition(xPosition + RIGHT, yPosition);
+		}
+		return isMinoMove;
+	}
+	
+	public boolean moveMinoToLeft() {
+		boolean isMinoMove = canMinoMove(xPosition + LEFT, yPosition, rotation);
+		if(isMinoMove) {
+			setMinoPosition(xPosition + LEFT, yPosition);
+		}
+		return isMinoMove;
+	}
+	
+	public boolean moveMinoToDown() {
+		boolean isMinoMove = canMinoMove(xPosition, yPosition + DOWN, rotation);
+		if(isMinoMove) {
+			setMinoPosition(getX(), getY() + DOWN);
+		}
+		return isMinoMove;
+	}
+
 }
