@@ -72,7 +72,7 @@ public class GameBoard extends JPanel{
 	private int erasedLineCounter;
 	public int stackMinoToBoard(Mino mino) {
 		erasedLineCounter = 0;
-		int position[][] = mino.getPosition(mino.getX(), mino.getY(), mino.getRotation());
+		int position[][] = mino.getBaseMinoPositions(mino.getX(), mino.getY(), mino.getRotation());
 		
 		int xPosition;
 		int yPosition;

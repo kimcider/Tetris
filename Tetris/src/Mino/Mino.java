@@ -63,7 +63,7 @@ public class Mino {
 	 * 		b == 0: x좌표
 	 * 		b == 1: y좌표  
 	 */
-	public int[][] getPosition(int baseX, int baseY, int rotate){
+	public int[][] getBaseMinoPositions(int baseX, int baseY, int rotate){
 		int[][] relativePosition = new int[4][2];
 		relativePosition = type.getBaseMinoRelativePosition(this.getType(), rotate);
 		
@@ -141,7 +141,7 @@ public class Mino {
 	}
 
 	public boolean canMinoMove(int x, int y, int rotate){
-		int [][] baseMinoPositions = getPosition(x,y,rotate);
+		int [][] baseMinoPositions = getBaseMinoPositions(x,y,rotate);
 		return gameBoard.canMinoMove(baseMinoPositions);
 	}
 	
@@ -168,5 +168,4 @@ public class Mino {
 		}
 		return isMinoMove;
 	}
-
 }
