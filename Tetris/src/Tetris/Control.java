@@ -264,7 +264,12 @@ public class Control extends JFrame{
 			
 			//quick move down
 			else if(e.getKeyCode() == KeyEvent.VK_SPACE) {
-				moveMinoToBottom(mino);
+				if(semaphore) {
+					semaphore = false;
+					moveMinoToBottom(mino);
+					semaphore = true;
+				}
+				
 			}
 			
 			//save mino
