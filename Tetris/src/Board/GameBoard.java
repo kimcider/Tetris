@@ -88,7 +88,7 @@ public class GameBoard extends JPanel{
 
 		lines.sort(Comparator.naturalOrder());
 		
-		if(lines.get(0) < stackedHighestY) { 
+		if(lines.get(0) < stackedHighestY) {  
 			stackedHighestY = lines.get(0);
 		}
 		checkIfLineIsFull(lines);
