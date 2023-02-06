@@ -68,17 +68,14 @@ public class GameBoard extends JPanel{
 		}
 		return true;
 	}
-	
-	private int erasedLineCounter;
+
 	public int stackMinoToBoard(Mino mino) {
-		erasedLineCounter = 0;
+		int erasedLineCounter = 0;
 		int baseMinoPositions[][] = mino.getBaseMinoPositions(mino.getX(), mino.getY(), mino.getRotation());
-		
-		int xPosition;
-		int yPosition;
 
 		ArrayList<Integer> lines = new ArrayList<>(Arrays.asList());
-		
+		int xPosition;
+		int yPosition;
 		for(int i = 0; i < 4; i++) {
 			xPosition = baseMinoPositions[i][0];
 			yPosition = baseMinoPositions[i][1];
@@ -88,14 +85,15 @@ public class GameBoard extends JPanel{
 
 		lines.sort(Comparator.naturalOrder());
 		
-		if(lines.get(0) < stackedHighestY) {  
+		if(lines.get(0) < stackedHighestY) { 
 			stackedHighestY = lines.get(0);
 		}
-		checkIfLineIsFull(lines);
+		erasedLineCounter = checkIfLineIsFull(lines);
 		return erasedLineCounter;
 	}
 	
-	public void checkIfLineIsFull(ArrayList<Integer> list) {
+	public int checkIfLineIsFull(ArrayList<Integer> list) {
+		int erasedLineCounter = 0;
 		int beforeNumber = -9999; 
 		for(int i = 0; i < list.size(); i++) {
 			int number = list.get(i);
@@ -116,6 +114,7 @@ public class GameBoard extends JPanel{
 				beforeNumber = number;
 			}
 		}
+		return erasedLineCounter;
 	}
 
 	public void eraseLine(int targetLine) {
@@ -156,4 +155,3 @@ class block {
 		return type;
 	}
 }
-
