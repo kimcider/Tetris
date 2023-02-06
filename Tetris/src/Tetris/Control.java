@@ -15,11 +15,11 @@ import Board.*;
 public class Control extends JFrame{
 	public static final int RIGHT = 1;
 	public static final int LEFT = -1;
-	public static final int HOLD = 0;
-	public static final int DOWN = 1;
+	public static final int DOWN = 0;
 	public static final int MINO_INITIAL_X_POSITION = 5;
 	public static final int MINO_INITIAL_Y_POSITION = 0;
 	
+	private KeyboardListener keyboardListener;
 	private GameBoard gameBoard;
 	private Mino mino;
 	private NextMinoBoard nextMinoBoard;
@@ -38,7 +38,8 @@ public class Control extends JFrame{
 		setSize(FRAME_WIDTH,FRAME_HEIGHT);
 		setVisible(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		addKeyListener(new KeyboardListener());
+		keyboardListener = new KeyboardListener();
+		addKeyListener(keyboardListener);
 	}
 	
 	public void paint(Graphics g) {
@@ -81,7 +82,7 @@ public class Control extends JFrame{
 		mino = nextMinoBoard.getMino();
 		mino.addMinoToGameBoard();
 
-		timer = new Timer();
+		timer = new Timer(this);
 		timer.run();
 	}
 	
@@ -112,62 +113,6 @@ public class Control extends JFrame{
 		}
 	}
 	
-	public void rotateMino(int rotate) {
-		int[][] rotationOffset;
-		int testingX;
-		int testingY;
-		
-		if(rotate == RIGHT) {
-			rotationOffset = WallKick.getRotationOffset(mino.getType(), mino.getRotation(), 0);
-		}
-		else {
-			rotationOffset = WallKick.getRotationOffset(mino.getType(), mino.getRotation(), 1);
-		}
-		
-		for(int i = 0; i < 5; i++) {	
-			int offsetX = rotationOffset[i][0];
-			int offsetY = -rotationOffset[i][1];
-			
-			testingX = mino.getX() + offsetX;
-			testingY = mino.getY() + offsetY;
-			
-			boolean answer;		
-			if(rotate == RIGHT) {
-				answer = mino.canMinoMove(testingX, testingY, (mino.getRotation() + 4 + RIGHT) % 4);
-			}else {
-				answer = mino.canMinoMove(testingX, testingY, (mino.getRotation() + 4 + LEFT) % 4);
-			}
-			if(answer == true) {
-				mino.rotateMino(testingX, testingY, rotate);
-				mino.setX(testingX);
-				mino.setY(testingY);
-				return;
-			}
-		}
-	}
-	
-	public void moveMinoToRight() {
-		isMovedJustBefore = mino.moveMinoToRight();
-	}
-	public void moveMinoToLeft() {
-		isMovedJustBefore = mino.moveMinoToLeft();
-	}
-	public boolean moveMinoToDown() {
-		boolean isMoved = mino.moveMinoToDown();
-		if(isMoved == false) {
-			if(isMovedJustBefore == true) {
-				stackMinoToGameBoard();
-			}else {
-				gameEnd();
-			}
-		}
-		isMovedJustBefore = isMoved;
-		return isMoved;
-	}
-
-	public void moveMinoToBottom() {
-		while(moveMinoToDown());
-	}
 	
 	public void stackMinoToGameBoard() {
 		int erasedLineCounter = gameBoard.stackMinoToBoard(mino);
@@ -194,15 +139,18 @@ public class Control extends JFrame{
 	class Timer extends Thread{
 		double interval = 1.0;
 		boolean ongoingFlag = true;
+		JFrame frame;
 		
+		public Timer(JFrame jframe) {
+			frame = jframe;
+		}
 		public void run() {
 			while(ongoingFlag) {
 				try {
 					sleep((long)(1000/interval));
-					if(ongoingFlag && moveDownSemaphore) {
-						moveDownSemaphore = false;
-						moveMinoToDown();
-						moveDownSemaphore = true;
+					if(ongoingFlag) {
+						KeyEvent keyEvent = new KeyEvent(frame, KeyEvent.KEY_PRESSED, System.currentTimeMillis(), 0, KeyEvent.VK_DOWN, KeyEvent.CHAR_UNDEFINED);
+						keyboardListener.keyPressed(keyEvent);
 					}
 				}catch(InterruptedException e) {
 					;
@@ -224,37 +172,75 @@ public class Control extends JFrame{
 		public void keyPressed(KeyEvent e) {
 			
 			if(e.getKeyCode() == KeyEvent.VK_RIGHT) {
-				moveMinoToRight();
+				if(mino.canMinoMove(RIGHT)) {
+					mino.moveMino(RIGHT);
+				}
 			}
 			
 			else if(e.getKeyCode() == KeyEvent.VK_LEFT) {
-				moveMinoToLeft();
+				if(mino.canMinoMove(LEFT)) {
+					mino.moveMino(LEFT);
+				}
 			}
 			
-			else if(e.getKeyCode() == KeyEvent.VK_UP || e.getKeyChar() == 'X' || e.getKeyChar() == 'x') {
-				rotateMino(RIGHT);
-			}
-			
-			else if(e.getKeyCode() == KeyEvent.VK_CONTROL || e.getKeyChar() == 'Z' || e.getKeyChar() == 'z') {
-				rotateMino(LEFT);
-			}
-			
+			/*
+			 * Move Mino To DOwn
+			 */
 			else if(e.getKeyCode() == KeyEvent.VK_DOWN) {
 				if(moveDownSemaphore) {
 					moveDownSemaphore = false;
-					moveMinoToDown();
+					
+					boolean canMinoMove = mino.canMinoMove(DOWN);
+					if(canMinoMove == true) {
+						mino.moveMino(DOWN);
+					}else {
+						if(isMovedJustBefore == true) {
+							stackMinoToGameBoard();
+						}else {
+							gameEnd();
+						}
+					}
+					isMovedJustBefore = canMinoMove;
+					
 					moveDownSemaphore = true;
 				}
 			}
 			
+			/*
+			 * Move Mino To Bottom
+			 */
 			else if(e.getKeyCode() == KeyEvent.VK_SPACE) {
 				if(moveDownSemaphore) {
 					moveDownSemaphore = false;
-					moveMinoToBottom();
+					
+					boolean canMinoMove = mino.canMinoMove(DOWN);
+					while(canMinoMove) {
+						mino.moveMino(DOWN);
+						isMovedJustBefore = true;
+						canMinoMove = mino.canMinoMove(DOWN);
+					}
+					
+					if(isMovedJustBefore == true) {
+						stackMinoToGameBoard();
+					}else {
+						gameEnd();
+					}
+					isMovedJustBefore = false;
+					
 					moveDownSemaphore = true;
 				}
 				
 			}
+			
+			else if(e.getKeyCode() == KeyEvent.VK_UP || e.getKeyChar() == 'X' || e.getKeyChar() == 'x') {
+				mino.rotateMino(RIGHT);
+			}
+			
+			else if(e.getKeyCode() == KeyEvent.VK_CONTROL || e.getKeyChar() == 'Z' || e.getKeyChar() == 'z') {
+				mino.rotateMino(LEFT);
+			}
+			
+
 			
 			else if( e.getKeyCode() == KeyEvent.VK_SHIFT || e.getKeyChar() == 'C' || e.getKeyChar() == 'c' ){
 				saveMino();

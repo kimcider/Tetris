@@ -48,20 +48,20 @@ public class GameBoard extends JPanel{
 	}
 
 
-	public boolean canMinoMove(int[][] position) {
+	public boolean canMinoMove(int[][] baseMinosPositions) {
 		int boardXPosition;
 		int boardYPosition;
 		for(int i = 0;i < 4; i++) {
 			
-			if(position[i][0] >= BOARD_WIDTH || position[i][0] < 0) {
+			if(baseMinosPositions[i][0] >= BOARD_WIDTH || baseMinosPositions[i][0] < 0) {
 				return false;
 			}
-			if(position[i][1] > BOARD_HEIGHT - 1 || position[i][1] < 0) {
+			if(baseMinosPositions[i][1] > BOARD_HEIGHT - 1 || baseMinosPositions[i][1] < 0) {
 				return false;
 			}
 			
-			boardXPosition = position[i][0];
-			boardYPosition = position[i][1];
+			boardXPosition = baseMinosPositions[i][0];
+			boardYPosition = baseMinosPositions[i][1];
 			if(gameBoard[boardXPosition][boardYPosition].isFilled()) {
 				return false;
 			}
@@ -72,7 +72,7 @@ public class GameBoard extends JPanel{
 	private int erasedLineCounter;
 	public int stackMinoToBoard(Mino mino) {
 		erasedLineCounter = 0;
-		int position[][] = mino.getBaseMinoPositions(mino.getX(), mino.getY(), mino.getRotation());
+		int baseMinoPositions[][] = mino.getBaseMinoPositions(mino.getX(), mino.getY(), mino.getRotation());
 		
 		int xPosition;
 		int yPosition;
@@ -80,8 +80,8 @@ public class GameBoard extends JPanel{
 		ArrayList<Integer> lines = new ArrayList<>(Arrays.asList());
 		
 		for(int i = 0; i < 4; i++) {
-			xPosition = position[i][0];
-			yPosition = position[i][1];
+			xPosition = baseMinoPositions[i][0];
+			yPosition = baseMinoPositions[i][1];
 			gameBoard[xPosition][yPosition].setType(mino.getType());
 			lines.add(yPosition);
 		}
@@ -91,11 +91,11 @@ public class GameBoard extends JPanel{
 		if(lines.get(0) < stackedHighestY) { 
 			stackedHighestY = lines.get(0);
 		}
-		checkIsLineFull(lines);
+		checkIfLineIsFull(lines);
 		return erasedLineCounter;
 	}
 	
-	public void checkIsLineFull(ArrayList<Integer> list) {
+	public void checkIfLineIsFull(ArrayList<Integer> list) {
 		int beforeNumber = -9999; 
 		for(int i = 0; i < list.size(); i++) {
 			int number = list.get(i);

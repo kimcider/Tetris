@@ -65,7 +65,7 @@ public class NextMinoBoard extends JPanel{
 	
 	public Mino getMino() {
 		nextMinoList[0][nextMinoIndex].removeMinoFromBoard(this);
-		MinoType answerType = nextMinoList[0][nextMinoIndex].getType();	
+		MinoType returnType = nextMinoList[0][nextMinoIndex].getType();	
 		nextMinoIndex = nextMinoIndex + 1;
 		
 		if(nextMinoIndex == 7) {
@@ -75,8 +75,8 @@ public class NextMinoBoard extends JPanel{
 		}
 		 
 		reorderNextMinoBoard();
-		Mino answerMino = new Mino(gameBoard, answerType);
-		return answerMino;
+		Mino returnMino = new Mino(gameBoard, returnType);
+		return returnMino;
 	}
 	
 	public void reorderNextMinoBoard() {

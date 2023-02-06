@@ -13,17 +13,17 @@ public enum MinoType {
 	T_Mino(Color.magenta, MinoRelativePosition.T_MinoPosition());
 	
 	final private Color color;
-	final int[][][] relativePosiion;
+	final int[][][] baseMinoRelativePosiions;
 	
 	private MinoType(Color color,int[][][] position) {
 		this.color = color;
-		this.relativePosiion = position;
+		this.baseMinoRelativePosiions = position;
 	}
 	public Color getColor() {
 		return color;
 	}
-	public int[][] getBaseMinoRelativePosition(MinoType type,int rotate){
-		return type.relativePosiion[rotate];
+	public int[][] getBaseMinosRelativePositions(MinoType type,int rotate){
+		return type.baseMinoRelativePosiions[rotate];
 	}
 }
 

@@ -29,7 +29,7 @@ public class Mino {
 		yPosition = MINO_INITIAL_Y_POSITION;
 		rotation = 0;
 		
-		int[][] relativePosition = MinoType.EMPTY.getBaseMinoRelativePosition(type,0);
+		int[][] relativePosition = MinoType.EMPTY.getBaseMinosRelativePositions(type,0);
 		for(int i = 0; i < 4; i++) {
 			mino[i] = new BaseMino(type);
 			mino[i].setRelativePosition(relativePosition[i]);
@@ -38,6 +38,23 @@ public class Mino {
 	
 	public BaseMino getBaseMino(int num) {
 		return mino[num];
+	}
+	
+	/*
+	 * return position[a][b]
+	 * 	a: baseMino number
+	 * 	b: x, y좌표
+	 * 		b == 0: x좌표
+	 * 		b == 1: y좌표  
+	 */
+	public int[][] getBaseMinoPositions(int baseXPosition, int baseYPosition, int rotate){
+		int[][] relativePosition = type.getBaseMinosRelativePositions(getType(), rotate);
+		int [][] baseMinoPositions = new int[4][2];
+		for(int i = 0; i < 4; i++) {
+			baseMinoPositions[i][0] = baseXPosition + relativePosition[i][0];
+			baseMinoPositions[i][1] = baseYPosition + relativePosition[i][1];
+		}
+		return baseMinoPositions;
 	}
 	
 	public MinoType getType() {
@@ -50,47 +67,54 @@ public class Mino {
 	public int getY() {
 		return yPosition;
 	}
-	public void setX(int x) {
-		xPosition = x;
-	}
-	public void setY(int y) {
-		yPosition = y;
-	}
-	/*
-	 * return position[a][b]
-	 * 	a: baseMino number
-	 * 	b: x, y좌표
-	 * 		b == 0: x좌표
-	 * 		b == 1: y좌표  
-	 */
-	public int[][] getBaseMinoPositions(int baseX, int baseY, int rotate){
-		int[][] relativePosition = new int[4][2];
-		relativePosition = type.getBaseMinoRelativePosition(this.getType(), rotate);
-		
-		int [][] position = new int[4][2];
-		for(int i = 0; i < 4; i++) {
-			position[i][0] = baseX + relativePosition[i][0];
-			position[i][1] = baseY + relativePosition[i][1];
-		}
-		return position;
-	}
 	
 	public int getRotation() {
 		return rotation;
 	}
 
-	public void rotateMino(int x, int y, int rotate) {
-		rotation = (rotation + rotate + 4) % 4;
-		int[][] relativePosition = new int[4][2];
-		relativePosition = MinoType.EMPTY.getBaseMinoRelativePosition(type, rotation);
-		for(int i = 0; i < 4; i++) {
-			mino[i].setRelativePosition(relativePosition[i]);
+	public void rotateMino(int rotate) {
+		int[][] rotationOffset;
+		int testingX;
+		int testingY;
+		
+		if(rotate == RIGHT) {
+			rotationOffset = WallKick.getRotationOffset(type, rotation, 0);
 		}
-		for(int i = 0; i < 4; i++) {
-			mino[i].setBounds(x * BLOCK_SIZE + mino[i].getRelativeXPosition() * BLOCK_SIZE + 1,y * BLOCK_SIZE + mino[i].getRelativeYPosition() * BLOCK_SIZE + 1, BLOCK_SIZE - 2,BLOCK_SIZE - 2);
+		else {
+			rotationOffset = WallKick.getRotationOffset(type, rotation, 1);
+		}
+		
+		for(int i = 0; i < 5; i++) {	
+			int offsetX = rotationOffset[i][0];
+			int offsetY = -rotationOffset[i][1];
+			
+			testingX = getX() + offsetX;
+			testingY = getY() + offsetY;
+			
+			boolean canMoveMino;		
+			if(rotate == RIGHT) {
+				canMoveMino = canMinoMove(testingX, testingY, (rotation + 4 + RIGHT) % 4);
+			}else {
+				canMoveMino = canMinoMove(testingX, testingY, (rotation + 4 + LEFT) % 4);
+			}
+			
+			if(canMoveMino == true) {
+				rotation = (rotation + rotate + 4) % 4;
+				int[][] relativePosition = MinoType.EMPTY.getBaseMinosRelativePositions(type, rotation);
+				for(int j = 0; j < 4; j++) {
+					mino[j].setRelativePosition(relativePosition[j]);
+				}
+				for(int j = 0; j < 4; j++) {
+					mino[j].setBounds(testingX * BLOCK_SIZE + mino[j].getRelativeXPosition() * BLOCK_SIZE + 1, testingY * BLOCK_SIZE + mino[j].getRelativeYPosition() * BLOCK_SIZE + 1, BLOCK_SIZE - 2, BLOCK_SIZE - 2);
+					
+				}
+				
+				xPosition = testingX;
+				yPosition = testingY;
+				return;
+			}
 		}
 	}
-	
 	
 	public void addMinoToGameBoard() {
 		setMinoPosition(MINO_INITIAL_X_POSITION, MINO_INITIAL_Y_POSITION);
@@ -101,8 +125,8 @@ public class Mino {
 	}
 
 	public void setMinoPosition(int x, int y) {
-		setX(x);
-		setY(y);
+		xPosition = x;
+		yPosition = y;
 		for(int i = 0; i < 4; i++) {
 			mino[i].setBounds(x * BLOCK_SIZE + mino[i].getRelativeXPosition() * BLOCK_SIZE + 1,y * BLOCK_SIZE + mino[i].getRelativeYPosition() * BLOCK_SIZE + 1, BLOCK_SIZE - 2,BLOCK_SIZE - 2);
 		}
@@ -140,32 +164,40 @@ public class Mino {
 		}
 	}
 
+	public boolean canMinoMove(int direction) {
+		int xVector = 0;
+		int yVector = 0;
+		switch(direction) {
+			case DOWN:
+				yVector = 1;
+				break;
+			default:
+				xVector = direction;
+				break;
+		}
+		int[][] baseMinoPositions = getBaseMinoPositions(xPosition + xVector, yPosition + yVector, rotation);
+		return gameBoard.canMinoMove(baseMinoPositions);
+	}
+	
+	/*
+	 * WallKick을 위해 x,y값도 받아서 수행하는 canMinoMove
+	 */
 	public boolean canMinoMove(int x, int y, int rotate){
 		int [][] baseMinoPositions = getBaseMinoPositions(x,y,rotate);
 		return gameBoard.canMinoMove(baseMinoPositions);
 	}
 	
-	public boolean moveMinoToRight() {
-		boolean isMinoMove = canMinoMove(xPosition + RIGHT, yPosition, rotation);
-		if(isMinoMove) {
-			setMinoPosition(xPosition + RIGHT, yPosition);
+	public void moveMino(int direction) {
+		int xVector = 0;
+		int yVector = 0;
+		switch(direction) {
+			case DOWN:
+				yVector = 1;
+				break;
+			default:
+				xVector = direction;
+				break;
 		}
-		return isMinoMove;
-	}
-	
-	public boolean moveMinoToLeft() {
-		boolean isMinoMove = canMinoMove(xPosition + LEFT, yPosition, rotation);
-		if(isMinoMove) {
-			setMinoPosition(xPosition + LEFT, yPosition);
-		}
-		return isMinoMove;
-	}
-	
-	public boolean moveMinoToDown() {
-		boolean isMinoMove = canMinoMove(xPosition, yPosition + DOWN, rotation);
-		if(isMinoMove) {
-			setMinoPosition(getX(), getY() + DOWN);
-		}
-		return isMinoMove;
-	}
+		setMinoPosition(xPosition + xVector, yPosition + yVector);
+	}	
 }
