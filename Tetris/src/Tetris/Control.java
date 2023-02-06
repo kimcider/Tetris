@@ -21,16 +21,17 @@ public class Control extends JFrame{
 	
 	private KeyboardListener keyboardListener;
 	private GameBoard gameBoard;
-	private Mino mino;
 	private NextMinoBoard nextMinoBoard;
 	private SaveBoard saveBoard;
 	private ScoreBoard scoreBoard;
-	private Timer  timer;
 	private int score;
+	
+	private Mino mino;
+	private Timer  timer;
+	
 	private boolean canSaveMino;
 	private boolean isMovedJustBefore;
 	private boolean gameEndFlag;
-	
 	private boolean moveDownSemaphore;
 	
 	public Control() {
@@ -38,6 +39,7 @@ public class Control extends JFrame{
 		setSize(FRAME_WIDTH,FRAME_HEIGHT);
 		setVisible(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
 		keyboardListener = new KeyboardListener();
 		addKeyListener(keyboardListener);
 	}
@@ -144,6 +146,7 @@ public class Control extends JFrame{
 		public Timer(JFrame jframe) {
 			frame = jframe;
 		}
+		
 		public void run() {
 			while(ongoingFlag) {
 				try {
@@ -184,7 +187,7 @@ public class Control extends JFrame{
 			}
 			
 			/*
-			 * Move Mino To DOwn
+			 * Move Mino To Down
 			 */
 			else if(e.getKeyCode() == KeyEvent.VK_DOWN) {
 				if(moveDownSemaphore) {

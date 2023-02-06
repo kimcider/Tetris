@@ -6,27 +6,25 @@ import static Tetris.Control.*;
 import Board.GameBoard;
 
 /*
- * Mino는 4개의 baseMino로 구성된다. 
- * 각각의 baseMino는 BLOCK_SIZE * BLOCK_SIZE 크기의 JPanel이다. (Mino는 그 자체로는 JPanel이 아니다)
- * 각각의 baseMino는 각자의 position정보를 갖으며, 이 포지션 정보는 특정 지점에 대한 상대적 위치로 표현된다. 
+ * Mino는 4개의 baseMino객체로 구성된다.
+ * Mino객체 각각은 JPanel이 아니며, BaseMino객체 각각이 JPanel이다. 
  * 
- * Mino의 position은 setPosition(x, y)함수에 들어오는 x, y좌표정보와 baseMino들의 상대적 위치정보를 더해 결정된다.
- * 
- * Mino는 7개의 타입을 갖으며, 모든 타입의 미노는 각각 Mino는 4개의 회전 상태를 갖는다. 
+ * Mino의 위치는 기준이 되는 위치인 baseXPosition, baseYPosition정보와 각각의 baseMino들의 상대적인 위치에 의해 결정된다. 
+ * BaseMino의 상대적 위치는 enum MinoType의 getBaseMinosRelativePositions()함수를 통해 받아올 수 있다. 
  */
 public class Mino {
 	private GameBoard gameBoard;
 	private BaseMino[] mino = new BaseMino[4];
-	private int xPosition;
-	private int yPosition;
+	private int baseXPosition;
+	private int baseYPosition;
 	private int rotation;
 	private MinoType type;
 	
 	public Mino(GameBoard gameBoard, MinoType type) {
 		this.gameBoard = gameBoard;
 		this.type = type;
-		xPosition = MINO_INITIAL_X_POSITION;
-		yPosition = MINO_INITIAL_Y_POSITION;
+		baseXPosition = MINO_INITIAL_X_POSITION;
+		baseYPosition = MINO_INITIAL_Y_POSITION;
 		rotation = 0;
 		
 		int[][] relativePosition = MinoType.EMPTY.getBaseMinosRelativePositions(type,0);
@@ -41,7 +39,7 @@ public class Mino {
 	}
 	
 	/*
-	 * return position[a][b]
+	 * return baseMinoPositions[a][b]
 	 * 	a: baseMino number
 	 * 	b: x, y좌표
 	 * 		b == 0: x좌표
@@ -62,10 +60,10 @@ public class Mino {
 	}
 	
 	public int getX() {
-		return xPosition;
+		return baseXPosition;
 	}
 	public int getY() {
-		return yPosition;
+		return baseYPosition;
 	}
 	
 	public int getRotation() {
@@ -109,8 +107,8 @@ public class Mino {
 					
 				}
 				
-				xPosition = testingX;
-				yPosition = testingY;
+				baseXPosition = testingX;
+				baseYPosition = testingY;
 				return;
 			}
 		}
@@ -125,26 +123,22 @@ public class Mino {
 	}
 
 	public void setMinoPosition(int x, int y) {
-		xPosition = x;
-		yPosition = y;
+		baseXPosition = x;
+		baseYPosition = y;
 		for(int i = 0; i < 4; i++) {
 			mino[i].setBounds(x * BLOCK_SIZE + mino[i].getRelativeXPosition() * BLOCK_SIZE + 1,y * BLOCK_SIZE + mino[i].getRelativeYPosition() * BLOCK_SIZE + 1, BLOCK_SIZE - 2,BLOCK_SIZE - 2);
 		}
 	}
-	
-	
-	/* 
-	 * waitNumber는 nextMinoBoard에 넣을 경우 사용된다. 
-	 * next n'th mino
-	 */
-	public void addMinoToOtherBoard(JPanel board, int x, int y) {
+
+	public void addMinoToSaveBoard(JPanel board, int x, int y) {
 		setBaseMinoBoundsForOtherBoard(x, y);
 		for(int i = 0;i < 4; i++) {
 			board.add(getBaseMino(i));
 		}
 		board.repaint();
 	}
-	public void addMinoToOtherBoard(JPanel board, int x, int y, int waitNumber) {
+	
+	public void addMinoToNextMinoBoard(JPanel board, int x, int y, int waitNumber) {
 		setBaseMinoBoundsForOtherBoard(x, y + (waitNumber * 4));
 		for(int i = 0;i < 4; i++) {
 			board.add(getBaseMino(i));
@@ -175,7 +169,7 @@ public class Mino {
 				xVector = direction;
 				break;
 		}
-		int[][] baseMinoPositions = getBaseMinoPositions(xPosition + xVector, yPosition + yVector, rotation);
+		int[][] baseMinoPositions = getBaseMinoPositions(baseXPosition + xVector, baseYPosition + yVector, rotation);
 		return gameBoard.canMinoMove(baseMinoPositions);
 	}
 	
@@ -198,6 +192,6 @@ public class Mino {
 				xVector = direction;
 				break;
 		}
-		setMinoPosition(xPosition + xVector, yPosition + yVector);
+		setMinoPosition(baseXPosition + xVector, baseYPosition + yVector);
 	}	
 }

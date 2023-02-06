@@ -86,10 +86,10 @@ public class NextMinoBoard extends JPanel{
 			if(tempIndex < 7) {
 				MinoType type = nextMinoList[listNumber][tempIndex].getType();
 				if(type == MinoType.S_Mino || type == MinoType.I_Mino) {
-					nextMinoList[listNumber][tempIndex].addMinoToOtherBoard(this, 3, 1, i);
+					nextMinoList[listNumber][tempIndex].addMinoToNextMinoBoard(this, 3, 1, i);
 				}
 				else {
-					nextMinoList[listNumber][tempIndex].addMinoToOtherBoard(this, 2, 1, i);
+					nextMinoList[listNumber][tempIndex].addMinoToNextMinoBoard(this, 2, 1, i);
 				}
 			}
 			tempIndex++;

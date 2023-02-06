@@ -2,6 +2,10 @@ package Mino;
 
 import java.awt.Color;
 
+/*
+ * 모든 미노는 7개의 타입 중 하나의 타입을 갖으며, 모든 타입의 미노는 각각 4개의 회전상태를 갖는다. 
+ */
+
 public enum MinoType {
 	EMPTY(Color.black, MinoRelativePosition.EmptyPosition()),
 	I_Mino(new Color(0,255,255), MinoRelativePosition.I_MinoPosition()),

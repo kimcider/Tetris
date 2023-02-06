@@ -49,10 +49,10 @@ public class SaveBoard extends JPanel{
 	
 	private void attachMinoToBoard() {
 		if(mino.getType() == MinoType.S_Mino) {
-			mino.addMinoToOtherBoard(this, 4, 2);
+			mino.addMinoToSaveBoard(this, 4, 2);
 		}
 		else{
-			mino.addMinoToOtherBoard(this, 3, 2);
+			mino.addMinoToSaveBoard(this, 3, 2);
 		}
 	}
 }
