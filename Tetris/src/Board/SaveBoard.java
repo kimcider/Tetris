@@ -31,7 +31,7 @@ public class SaveBoard extends JPanel{
 		g.fillRect(10, 10, width - 20, height - 20);
 	}
 	
-	public Mino saveMino(Mino mino) {
+	public Mino replaceMino(Mino mino) {
 		Mino returnMino = null;
 		
 		mino.removeMinoFromBoard(gameBoard);

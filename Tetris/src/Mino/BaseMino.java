@@ -1,38 +1,25 @@
 package Mino;
 
-import java.awt.Color;
 import javax.swing.JPanel;
+import Tetris.Point;
 import static Tetris.Main.*;
 
 
 public class BaseMino extends JPanel{
-	private Color color;
-
-	/*
-	 * position[0]은 baseMino의 xPosition을,
-	 * position[1]은 baseMino의 yPosition을 지칭한다.
-	 */
-	private int[] position = new int[2];
+	private Point point;
 	
 	public BaseMino(MinoType type) {
 		setVisible(true);
 		setSize(BLOCK_SIZE,BLOCK_SIZE);
 		setBackground(type.getColor());
-	}
-	public void setRelativePosition(int[] position) {
-		this.position[0] = position[0];
-		this.position[1] = position[1];
-	}
-	public int[] getRelativePosition() {
-		return position;
+		point = new Point();
 	}
 	
-	public int getRelativeXPosition() { 
-		return position[0];
+	public void setRelativePoint(Point point) {
+		this.point.setPoint(point.getX(), point.getY());
 	}
 	
-	public int getRelativeYPosition() { 
-		return position[1];
+	public Point getRelativePoint() {
+		return point;
 	}
-	
 }

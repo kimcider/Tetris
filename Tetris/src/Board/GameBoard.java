@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.awt.Graphics;
 import java.awt.Color;
 import javax.swing.JPanel;
+import Tetris.Point;
 import Mino.Mino;
 import Mino.MinoType;
 import static Tetris.Main.*;
@@ -19,13 +20,17 @@ public class GameBoard extends JPanel{
 		setSize(BLOCK_SIZE * BOARD_WIDTH, BLOCK_SIZE * BOARD_HEIGHT);
 		setBounds(BOARD_START_WIDTH,BOARD_START_HEIGHT,getWidth(),getHeight());
 		
+		initilizeGameBoard();
+		stackedHighestY = BOARD_HEIGHT +9999;
+	}
+	
+	private void initilizeGameBoard() {
 		gameBoard = new block[BOARD_WIDTH][BOARD_HEIGHT];
 		for(int i=0;i<BOARD_WIDTH;i++) {
 			for(int j=0;j<BOARD_HEIGHT;j++) {
 				gameBoard[i][j] = new block();
 			}
 		}
-		stackedHighestY = BOARD_HEIGHT +9999;
 	}
 	
 	public void paintComponent(Graphics g) {
@@ -47,22 +52,17 @@ public class GameBoard extends JPanel{
 		}
 	}
 
-
-	public boolean canMinoMove(int[][] baseMinosPositions) {
-		int boardXPosition;
-		int boardYPosition;
+	public boolean canMinoMove(Point[] baseMinosPoint) {
 		for(int i = 0;i < 4; i++) {
 			
-			if(baseMinosPositions[i][0] >= BOARD_WIDTH || baseMinosPositions[i][0] < 0) {
+			if(baseMinosPoint[i].getX() >= BOARD_WIDTH || baseMinosPoint[i].getX() < 0) {
 				return false;
 			}
-			if(baseMinosPositions[i][1] > BOARD_HEIGHT - 1 || baseMinosPositions[i][1] < 0) {
+			if(baseMinosPoint[i].getY() > BOARD_HEIGHT - 1 || baseMinosPoint[i].getY() < 0) {
 				return false;
 			}
 			
-			boardXPosition = baseMinosPositions[i][0];
-			boardYPosition = baseMinosPositions[i][1];
-			if(gameBoard[boardXPosition][boardYPosition].isFilled()) {
+			if(gameBoard[baseMinosPoint[i].getX()][baseMinosPoint[i].getY()].isFilled()) {
 				return false;
 			}
 		}
@@ -71,16 +71,15 @@ public class GameBoard extends JPanel{
 
 	public int stackMinoToBoard(Mino mino) {
 		int erasedLineCounter = 0;
-		int baseMinoPositions[][] = mino.getBaseMinoPositions(mino.getX(), mino.getY(), mino.getRotation());
+		Point baseMinoPoints[] = mino.getBaseMinosPoints(mino.getPoint().getX(), mino.getPoint().getY(), mino.getRotation());
 
 		ArrayList<Integer> lines = new ArrayList<>(Arrays.asList());
-		int xPosition;
-		int yPosition;
+		
 		for(int i = 0; i < 4; i++) {
-			xPosition = baseMinoPositions[i][0];
-			yPosition = baseMinoPositions[i][1];
-			gameBoard[xPosition][yPosition].setType(mino.getType());
-			lines.add(yPosition);
+			int x = baseMinoPoints[i].getX();
+			int y = baseMinoPoints[i].getY();
+			gameBoard[x][y].setType(mino.getType());
+			lines.add(y);
 		}
 
 		lines.sort(Comparator.naturalOrder());

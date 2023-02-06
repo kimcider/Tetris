@@ -16,8 +16,6 @@ public class Control extends JFrame{
 	public static final int RIGHT = 1;
 	public static final int LEFT = -1;
 	public static final int DOWN = 0;
-	public static final int MINO_INITIAL_X_POSITION = 5;
-	public static final int MINO_INITIAL_Y_POSITION = 0;
 	
 	private KeyboardListener keyboardListener;
 	private GameBoard gameBoard;
@@ -26,13 +24,13 @@ public class Control extends JFrame{
 	private ScoreBoard scoreBoard;
 	private int score;
 	
-	private Mino mino;
-	private Timer  timer;
-	
 	private boolean canSaveMino;
 	private boolean isMovedJustBefore;
 	private boolean gameEndFlag;
 	private boolean moveDownSemaphore;
+	
+	private Mino mino;
+	private Timer  timer;
 	
 	public Control() {
 		setLayout(null);
@@ -61,11 +59,6 @@ public class Control extends JFrame{
 	}
 	
 	public void gameStart() {
-		score = 0;
-		canSaveMino = true;
-		gameEndFlag = false;
-		moveDownSemaphore = true;
-		
 		gameBoard = new GameBoard();
 		nextMinoBoard = new NextMinoBoard(gameBoard);
 		saveBoard = new SaveBoard(gameBoard);
@@ -81,6 +74,13 @@ public class Control extends JFrame{
 		saveBoard.repaint();
 		scoreBoard.repaint();
 		
+		
+		canSaveMino = true;
+		isMovedJustBefore = true;
+		gameEndFlag = false;
+		moveDownSemaphore = true;
+		score = 0;
+		
 		mino = nextMinoBoard.getMino();
 		mino.addMinoToGameBoard();
 
@@ -93,19 +93,21 @@ public class Control extends JFrame{
 		remove(gameBoard);
 		remove(nextMinoBoard);
 		remove(saveBoard);
-		revalidate();
-		repaint();
+		remove(scoreBoard);
 		
 		gameBoard = null;
 		nextMinoBoard = null;
 		saveBoard = null;
 		timer = null; 
 		gameEndFlag = true;
+
+		revalidate();
+		repaint();
 	}
 	
 	public void saveMino() {
 		if(canSaveMino == true) {
-			mino = saveBoard.saveMino(mino);
+			mino = saveBoard.replaceMino(mino);
 			
 			if(mino == null) {
 				mino = nextMinoBoard.getMino();
