@@ -85,7 +85,7 @@ public class Control extends JFrame{
 		mino.addMinoToGameBoard();
 
 		timer = new Timer(this);
-		timer.run();
+//		timer.run();
 	}
 	
 	public void gameEnd() {

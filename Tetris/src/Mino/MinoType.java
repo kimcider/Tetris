@@ -30,6 +30,10 @@ public enum MinoType {
 	public Point[] getBaseMinosRelativePoint(MinoType type, int rotate) {
 		return type.baseMinoRelativePoints[rotate];
 	}
+	
+	public Color shadowColor(Color color) {
+		return new Color(color.getRed(), color.getGreen(), color.getBlue(), 100);
+	}
 }
 
 /*

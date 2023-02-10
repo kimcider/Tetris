@@ -18,7 +18,7 @@ public class Mino {
 	private static final int MINO_INITIAL_Y_POSITION = 0;
 	
 	private GameBoard gameBoard;
-
+	
 	private MinoType type;
 	private int rotation;
 	private BaseMino[] mino = new BaseMino[4];
@@ -37,17 +37,12 @@ public class Mino {
 			mino[i] = new BaseMino(type);
 			mino[i].setRelativePoint(relativepoints[i]);
 		}
-		
-		
 	}
 	
 	public BaseMino getBaseMino(int num) {
 		return mino[num];
 	}
 	
-	/*
-	 * 이름 좀 바꿔야되나?
-	 */
 	public Point[] getBaseMinosPoints(int baseX, int baseY, int rotate){
 		Point[] relativePoints = type.getBaseMinosRelativePoint(getType(), rotate);
 		Point[] baseMinoPoints = new Point[4];
@@ -78,7 +73,6 @@ public class Mino {
 
 
 	public void moveMino(int direction) {
-		System.out.println("moveMino: "+direction);
 		int xVector = 0;
 		int yVector = 0;
 		switch(direction) {

@@ -85,9 +85,9 @@ public class GameBoard extends JPanel{
 			break;
 		}
 		
-		Point[] basesMinoPoints = mino.getBaseMinosPoints(mino.getPoint().getX() + xVector, mino.getPoint().getY() + yVector, mino.getRotation());
+		Point[] baseMinoPoints = mino.getBaseMinosPoints(mino.getPoint().getX() + xVector, mino.getPoint().getY() + yVector, mino.getRotation());
 		
-		boolean canMinoMove = isEmptySpaces(basesMinoPoints);
+		boolean canMinoMove = isEmptySpaces(baseMinoPoints);
 		return canMinoMove;
 	}
 
@@ -101,9 +101,9 @@ public class GameBoard extends JPanel{
 			
 			rotatablePoint = new Point(mino.getPoint().getX() + offsetX, mino.getPoint().getY() + offsetY);
 			
-			Point[] baseMinosPoints = mino.getBaseMinosPoints(rotatablePoint.getX(), rotatablePoint.getY(), (mino.getRotation() + 4 + rotate) % 4);
+			Point[] baseMinoPoints = mino.getBaseMinosPoints(rotatablePoint.getX(), rotatablePoint.getY(), (mino.getRotation() + 4 + rotate) % 4);
 			
-			boolean canMinoRotate = isEmptySpaces(baseMinosPoints);
+			boolean canMinoRotate = isEmptySpaces(baseMinoPoints);
 			
 			if(canMinoRotate == true) {
 				break;
