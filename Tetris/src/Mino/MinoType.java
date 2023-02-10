@@ -31,8 +31,8 @@ public enum MinoType {
 		return type.baseMinoRelativePoints[rotate];
 	}
 	
-	public Color shadowColor(Color color) {
-		return new Color(color.getRed(), color.getGreen(), color.getBlue(), 100);
+	public Color shadowColor() {
+		return new Color(color.getRed(), color.getGreen(), color.getBlue(), 200);
 	}
 }
 

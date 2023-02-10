@@ -18,6 +18,27 @@ public class GameBoard extends JPanel{
 	private block[][] gameBoard;
 	private int stackedHighestY;
 	
+	/*
+	 * TSpinCheck
+	 */
+	public void TestCase_TSpin() {
+		for(int i = 3; i < BOARD_WIDTH;i ++) {
+			gameBoard[i][BOARD_HEIGHT - 1].setType(MinoType.I_Mino);
+			gameBoard[i][BOARD_HEIGHT - 2].setType(MinoType.I_Mino);
+			gameBoard[i][BOARD_HEIGHT - 3].setType(MinoType.I_Mino);
+		}
+		for(int i = BOARD_HEIGHT - 1; i > BOARD_HEIGHT - 5; i--) {
+			gameBoard[0][i].setType(MinoType.I_Mino);	
+		}
+		gameBoard[1][BOARD_HEIGHT - 4].setType(MinoType.I_Mino);	
+		
+		gameBoard[2][BOARD_HEIGHT - 1].setType(MinoType.I_Mino);
+		gameBoard[2][BOARD_HEIGHT - 6].setType(MinoType.I_Mino);
+		gameBoard[3][BOARD_HEIGHT - 6].setType(MinoType.I_Mino);
+		gameBoard[3][BOARD_HEIGHT - 5].setType(MinoType.I_Mino);
+		gameBoard[3][BOARD_HEIGHT - 4].setType(MinoType.I_Mino);
+	}
+	
 	public GameBoard() {
 		setVisible(true);
 		setSize(BLOCK_SIZE * BOARD_WIDTH, BLOCK_SIZE * BOARD_HEIGHT);
@@ -25,6 +46,7 @@ public class GameBoard extends JPanel{
 		
 		initilizeGameBoard();
 		stackedHighestY = BOARD_HEIGHT +9999;
+		
 	}
 	
 	private void initilizeGameBoard() {
@@ -85,13 +107,23 @@ public class GameBoard extends JPanel{
 			break;
 		}
 		
-		Point[] baseMinoPoints = mino.getBaseMinosPoints(mino.getPoint().getX() + xVector, mino.getPoint().getY() + yVector, mino.getRotation());
+		Point[] baseMinoPoints = mino.getBaseMinosPoints(mino.getX() + xVector, mino.getY() + yVector, mino.getRotation());
 		
 		boolean canMinoMove = isEmptySpaces(baseMinoPoints);
 		return canMinoMove;
 	}
 
-	public Point canMinoRotate(Mino mino, int rotate) {
+	public Point getBottom(Mino mino) {
+		Point bottomPoint = new Point(mino.getX(), mino.getY());
+		Point[] forTestBaseMinoPoints = mino.getBaseMinosPoints(bottomPoint.getX(), bottomPoint.getY() + 1, mino.getRotation());
+		while(isEmptySpaces(forTestBaseMinoPoints)) {
+			bottomPoint.setPoint(bottomPoint.getX(), bottomPoint.getY() + 1);
+			forTestBaseMinoPoints = mino.getBaseMinosPoints(bottomPoint.getX(), bottomPoint.getY() + 1, mino.getRotation());
+		}
+		return bottomPoint;
+	}
+	
+	public Point getRotatablePoint(Mino mino, int rotate) {
 		Point rotatablePoint = null;
 		Point[] rotationOffset = getRotationOffset(mino, rotate);
 		
@@ -99,7 +131,7 @@ public class GameBoard extends JPanel{
 			int offsetX = rotationOffset[i].getX();
 			int offsetY = -rotationOffset[i].getY(); //음수를 취하는 이유는 WallKick클래스의 주석 참조. 
 			
-			rotatablePoint = new Point(mino.getPoint().getX() + offsetX, mino.getPoint().getY() + offsetY);
+			rotatablePoint = new Point(mino.getX() + offsetX, mino.getY() + offsetY);
 			
 			Point[] baseMinoPoints = mino.getBaseMinosPoints(rotatablePoint.getX(), rotatablePoint.getY(), (mino.getRotation() + 4 + rotate) % 4);
 			
@@ -129,7 +161,7 @@ public class GameBoard extends JPanel{
 	
 	public int stackMinoToBoard(Mino mino) {
 		int erasedLineCounter = 0;
-		Point baseMinoPoints[] = mino.getBaseMinosPoints(mino.getPoint().getX(), mino.getPoint().getY(), mino.getRotation());
+		Point baseMinoPoints[] = mino.getBaseMinosPoints(mino.getX(), mino.getY(), mino.getRotation());
 
 		ArrayList<Integer> lines = new ArrayList<>(Arrays.asList());
 		

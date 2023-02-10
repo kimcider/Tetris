@@ -17,7 +17,7 @@ public class NextMinoBoard extends JPanel{
 	private int nextMinoIndex;
 	
 	public void paintComponent(Graphics g) {
-		g.setColor(Color.blue);
+		g.setColor(Color.gray);
 		g.fillRect(0, 0, width, height);
 		g.setColor(Color.black);
 		g.fillRect(10, 10, width-20, height-20);

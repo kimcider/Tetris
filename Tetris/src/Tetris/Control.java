@@ -44,9 +44,9 @@ public class Control extends JFrame{
 	
 	public void paint(Graphics g) {
 		if(gameEndFlag == false) {
-			g.setColor(Color.green);
+			g.setColor(Color.black);
 			g.fillRect(0, 0, FRAME_WIDTH, FRAME_HEIGHT);
-			g.setColor(Color.blue);
+			g.setColor(Color.gray);
 			g.fillRect(BOARD_START_WIDTH - 10, BOARD_START_HEIGHT + 15, BLOCK_SIZE * BOARD_WIDTH + 20, BLOCK_SIZE * BOARD_HEIGHT + 25);	
 		}else {
 			g.setColor(Color.gray);
@@ -218,11 +218,11 @@ public class Control extends JFrame{
 				if(moveDownSemaphore) {
 					moveDownSemaphore = false;
 					
-					boolean canMinoMove = gameBoard.canMinoMove(mino, DOWN);
-					while(canMinoMove) {
-						mino.moveMino(DOWN);
-						isMovedJustBefore = true;
-						canMinoMove = gameBoard.canMinoMove(mino, DOWN);
+					boolean canMoveDown = gameBoard.canMinoMove(mino, DOWN);
+					if(canMoveDown) {
+						Point bottomPoint = gameBoard.getBottom(mino);
+						mino.moveMino(bottomPoint);
+						isMovedJustBefore = true;	
 					}
 					
 					if(isMovedJustBefore == true) {
@@ -230,20 +230,20 @@ public class Control extends JFrame{
 					}else {
 						gameEnd();
 					}
-					isMovedJustBefore = false;
 					
+					isMovedJustBefore = false;
 					moveDownSemaphore = true;
 				}
 				
 			}
 			
 			else if(e.getKeyCode() == KeyEvent.VK_UP || e.getKeyChar() == 'X' || e.getKeyChar() == 'x') {
-				Point rotatablePoint = gameBoard.canMinoRotate(mino, RIGHT);
+				Point rotatablePoint = gameBoard.getRotatablePoint(mino, RIGHT);
 				mino.rotateMino(rotatablePoint, RIGHT);
 			}
 			
 			else if(e.getKeyCode() == KeyEvent.VK_CONTROL || e.getKeyChar() == 'Z' || e.getKeyChar() == 'z') {
-				Point rotatablePoint = gameBoard.canMinoRotate(mino, LEFT);
+				Point rotatablePoint = gameBoard.getRotatablePoint(mino, LEFT);
 				mino.rotateMino(rotatablePoint, LEFT);
 			}
 			

@@ -14,10 +14,11 @@ import Board.GameBoard;
  * baseMino의 상대적 위치는 enum MinoType의 getBaseMinosRelativePoint()함수를 통해 얻는다.
  */
 public class Mino {
-	private static final int MINO_INITIAL_X_POSITION = 5;
-	private static final int MINO_INITIAL_Y_POSITION = 0;
+	public static final int MINO_INITIAL_X_POSITION = 5;
+	public static final int MINO_INITIAL_Y_POSITION = 0;
 	
 	private GameBoard gameBoard;
+	private ShadowMino shadowMino;
 	
 	private MinoType type;
 	private int rotation;
@@ -37,6 +38,7 @@ public class Mino {
 			mino[i] = new BaseMino(type);
 			mino[i].setRelativePoint(relativepoints[i]);
 		}
+		shadowMino = new ShadowMino(gameBoard, this);
 	}
 	
 	public BaseMino getBaseMino(int num) {
@@ -56,8 +58,14 @@ public class Mino {
 		return type;
 	}
 	
-	public Point getPoint() {
-		return basePoint;
+//	public Point getPoint() {
+//		return basePoint;
+//	}
+	public int getX() {
+		return basePoint.getX();
+	}
+	public int getY() {
+		return basePoint.getY();
 	}
 	
 	private void setPoint(int x, int y) {
@@ -71,7 +79,9 @@ public class Mino {
 		return rotation;
 	}
 
-
+	public ShadowMino getShadowMino() {
+		return shadowMino;
+	}
 	public void moveMino(int direction) {
 		int xVector = 0;
 		int yVector = 0;
@@ -83,8 +93,16 @@ public class Mino {
 				xVector = direction;
 				break;
 		}
+		System.out.println("MOVEMINO BEFORE! basePoint x: "+basePoint.getX() + ", basePoint y: "+basePoint.getY());
 		setPoint(basePoint.getX() + xVector, basePoint.getY() + yVector);
+		System.out.println("MOVEMINO MIDDLE! basePoint x: "+basePoint.getX() + ", basePoint y: "+basePoint.getY());
+		shadowMino.moveShadow();
+		System.out.println("MOVEMINO AFTER! basePoint x: "+basePoint.getX() + ", basePoint y: "+basePoint.getY());
 	}	
+	public void moveMino(Point point) {
+		setPoint(point.getX(), point.getY());
+		shadowMino.moveShadow();
+	}
 	public void rotateMino(Point rotatablePoint, int direction) {
 		if(rotatablePoint != null) {
 			rotation = (rotation + direction + 4) % 4;
@@ -94,9 +112,13 @@ public class Mino {
 			}
 			setPoint(rotatablePoint.getX(), rotatablePoint.getY());
 		}
+		shadowMino.moveShadow();
 	}
 	
 	public void addMinoToGameBoard() {
+		shadowMino.addMinoToGameBoard();
+		shadowMino.moveShadow();
+		
 		setPoint(MINO_INITIAL_X_POSITION, MINO_INITIAL_Y_POSITION);
 		for(int i = 0; i < 4; i++) {
 			gameBoard.add(getBaseMino(i));
@@ -127,6 +149,7 @@ public class Mino {
 	}
 	
 	public void removeMinoFromBoard(JPanel board) {
+		shadowMino.removeMinoFromBoard(board);
 		for(int i = 0; i < 4; i++) {
 			board.remove(getBaseMino(i));
 		}
