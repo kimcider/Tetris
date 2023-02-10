@@ -45,6 +45,9 @@ public class Mino {
 		return mino[num];
 	}
 	
+	/*
+	 * 이름 좀 바꿔야되나?
+	 */
 	public Point[] getBaseMinosPoints(int baseX, int baseY, int rotate){
 		Point[] relativePoints = type.getBaseMinosRelativePoint(getType(), rotate);
 		Point[] baseMinoPoints = new Point[4];
@@ -73,13 +76,24 @@ public class Mino {
 		return rotation;
 	}
 
-	public void rotateMino(int rotate) {
-		Point[] rotationOffset = getRotationOffset(rotate);
-		
-		Point rotatablePoint = getRotatablePoint(rotationOffset, rotate);
-		
+
+	public void moveMino(int direction) {
+		System.out.println("moveMino: "+direction);
+		int xVector = 0;
+		int yVector = 0;
+		switch(direction) {
+			case DOWN:
+				yVector = 1;
+				break;
+			default:
+				xVector = direction;
+				break;
+		}
+		setPoint(basePoint.getX() + xVector, basePoint.getY() + yVector);
+	}	
+	public void rotateMino(Point rotatablePoint, int direction) {
 		if(rotatablePoint != null) {
-			rotation = (rotation + rotate + 4) % 4;
+			rotation = (rotation + direction + 4) % 4;
 			Point[] relativePoint = MinoType.EMPTY.getBaseMinosRelativePoint(type, rotation);
 			for(int i = 0; i < 4; i++) {
 				mino[i].setRelativePoint(relativePoint[i]);
@@ -87,37 +101,6 @@ public class Mino {
 			setPoint(rotatablePoint.getX(), rotatablePoint.getY());
 		}
 	}
-	public Point[] getRotationOffset(int rotate) {
-		Point[] rotationOffset;
-		if(rotate == RIGHT) {
-			rotationOffset = WallKick.getRotationOffset(type, rotation, 0);
-		}
-		else {
-			rotationOffset = WallKick.getRotationOffset(type, rotation, 1);
-		}
-		return rotationOffset;
-	}
-	
-	public Point getRotatablePoint(Point[] rotationOffset, int rotate) {
-		Point rotatablePoint = null;
-
-		for(int i = 0; i < rotationOffset.length; i++) {
-			int offsetX = rotationOffset[i].getX();
-			int offsetY = -rotationOffset[i].getY(); //음수를 취하는 이유는 WallKick클래스의 주석 참조. 
-			
-			rotatablePoint = new Point(basePoint.getX() + offsetX, basePoint.getY() + offsetY);
-			
-			boolean canMinoRotate = canMinoMove(rotatablePoint.getX(), rotatablePoint.getY(), (rotation + 4 + rotate) % 4);
-			if(canMinoRotate == true) {
-				break;
-			}
-			
-			rotatablePoint = null;
-		}
-		return rotatablePoint;
-	}
-	
-
 	
 	public void addMinoToGameBoard() {
 		setPoint(MINO_INITIAL_X_POSITION, MINO_INITIAL_Y_POSITION);
@@ -154,42 +137,4 @@ public class Mino {
 			board.remove(getBaseMino(i));
 		}
 	}
-
-	public boolean canMinoMove(int direction) {
-		int xVector = 0;
-		int yVector = 0;
-		switch(direction) {
-			case DOWN:
-				yVector = 1;
-				break;
-			default:
-				xVector = direction;
-				break;
-		}
-		Point[] baseMinoPoints = getBaseMinosPoints(basePoint.getX() + xVector, basePoint.getY() + yVector, rotation);
-		return gameBoard.canMinoMove(baseMinoPoints);
-	}
-	
-	/*
-	 * WallKick test를 위해 x, y 값도 받아서 움직일 수 있는지를 체크하는 함수.
-	 */
-	public boolean canMinoMove(int x, int y, int rotate){
-		Point[] baseMinoPoints = getBaseMinosPoints(x, y, rotate);
-		return gameBoard.canMinoMove(baseMinoPoints);
-	}
-	
-	public void moveMino(int direction) {
-		System.out.println("moveMino: "+direction);
-		int xVector = 0;
-		int yVector = 0;
-		switch(direction) {
-			case DOWN:
-				yVector = 1;
-				break;
-			default:
-				xVector = direction;
-				break;
-		}
-		setPoint(basePoint.getX() + xVector, basePoint.getY() + yVector);
-	}	
 }

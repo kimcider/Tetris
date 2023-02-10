@@ -9,7 +9,10 @@ import javax.swing.JPanel;
 import Tetris.Point;
 import Mino.Mino;
 import Mino.MinoType;
+import Mino.WallKick;
+
 import static Tetris.Main.*;
+import static Tetris.Control.*;
 
 public class GameBoard extends JPanel{
 	private block[][] gameBoard;
@@ -52,7 +55,7 @@ public class GameBoard extends JPanel{
 		}
 	}
 
-	public boolean canMinoMove(Point[] baseMinosPoint) {
+	public boolean isEmptySpaces(Point[] baseMinosPoint) {
 		for(int i = 0;i < 4; i++) {
 			
 			if(baseMinosPoint[i].getX() >= BOARD_WIDTH || baseMinosPoint[i].getX() < 0) {
@@ -68,7 +71,62 @@ public class GameBoard extends JPanel{
 		}
 		return true;
 	}
+	
+	public boolean canMinoMove(Mino mino, int direction) {
+		int xVector = 0;
+		int yVector = 0;
+		
+		switch(direction) {
+		case DOWN:
+			yVector = 1;
+			break;
+		default:
+			xVector = direction;
+			break;
+		}
+		
+		Point[] basesMinoPoints = mino.getBaseMinosPoints(mino.getPoint().getX() + xVector, mino.getPoint().getY() + yVector, mino.getRotation());
+		
+		boolean canMinoMove = isEmptySpaces(basesMinoPoints);
+		return canMinoMove;
+	}
 
+	public Point canMinoRotate(Mino mino, int rotate) {
+		Point rotatablePoint = null;
+		Point[] rotationOffset = getRotationOffset(mino, rotate);
+		
+		for(int i = 0; i < rotationOffset.length; i++) {
+			int offsetX = rotationOffset[i].getX();
+			int offsetY = -rotationOffset[i].getY(); //음수를 취하는 이유는 WallKick클래스의 주석 참조. 
+			
+			rotatablePoint = new Point(mino.getPoint().getX() + offsetX, mino.getPoint().getY() + offsetY);
+			
+			Point[] baseMinosPoints = mino.getBaseMinosPoints(rotatablePoint.getX(), rotatablePoint.getY(), (mino.getRotation() + 4 + rotate) % 4);
+			
+			boolean canMinoRotate = isEmptySpaces(baseMinosPoints);
+			
+			if(canMinoRotate == true) {
+				break;
+			}
+			else {
+				rotatablePoint = null;
+			}
+		}
+		return rotatablePoint;
+	}
+	
+	public Point[] getRotationOffset(Mino mino, int rotate) {
+		Point[] rotationOffset;
+		if(rotate == RIGHT) {
+			rotationOffset = WallKick.getRotationOffset(mino.getType(), mino.getRotation(), 0);
+		}
+		else {
+			rotationOffset = WallKick.getRotationOffset(mino.getType(), mino.getRotation(), 1);
+		}
+		return rotationOffset;
+	}
+	
+	
 	public int stackMinoToBoard(Mino mino) {
 		int erasedLineCounter = 0;
 		Point baseMinoPoints[] = mino.getBaseMinosPoints(mino.getPoint().getX(), mino.getPoint().getY(), mino.getRotation());

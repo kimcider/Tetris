@@ -177,13 +177,13 @@ public class Control extends JFrame{
 		public void keyPressed(KeyEvent e) {
 			
 			if(e.getKeyCode() == KeyEvent.VK_RIGHT) {
-				if(mino.canMinoMove(RIGHT)) {
+				if(gameBoard.canMinoMove(mino, RIGHT)) {
 					mino.moveMino(RIGHT);
 				}
 			}
 			
 			else if(e.getKeyCode() == KeyEvent.VK_LEFT) {
-				if(mino.canMinoMove(LEFT)) {
+				if(gameBoard.canMinoMove(mino, LEFT)) {
 					mino.moveMino(LEFT);
 				}
 			}
@@ -195,7 +195,7 @@ public class Control extends JFrame{
 				if(moveDownSemaphore) {
 					moveDownSemaphore = false;
 					
-					boolean canMinoMove = mino.canMinoMove(DOWN);
+					boolean canMinoMove = gameBoard.canMinoMove(mino, DOWN);
 					if(canMinoMove == true) {
 						mino.moveMino(DOWN);
 					}else {
@@ -218,11 +218,11 @@ public class Control extends JFrame{
 				if(moveDownSemaphore) {
 					moveDownSemaphore = false;
 					
-					boolean canMinoMove = mino.canMinoMove(DOWN);
+					boolean canMinoMove = gameBoard.canMinoMove(mino, DOWN);
 					while(canMinoMove) {
 						mino.moveMino(DOWN);
 						isMovedJustBefore = true;
-						canMinoMove = mino.canMinoMove(DOWN);
+						canMinoMove = gameBoard.canMinoMove(mino, DOWN);
 					}
 					
 					if(isMovedJustBefore == true) {
@@ -238,11 +238,13 @@ public class Control extends JFrame{
 			}
 			
 			else if(e.getKeyCode() == KeyEvent.VK_UP || e.getKeyChar() == 'X' || e.getKeyChar() == 'x') {
-				mino.rotateMino(RIGHT);
+				Point rotatablePoint = gameBoard.canMinoRotate(mino, RIGHT);
+				mino.rotateMino(rotatablePoint, RIGHT);
 			}
 			
 			else if(e.getKeyCode() == KeyEvent.VK_CONTROL || e.getKeyChar() == 'Z' || e.getKeyChar() == 'z') {
-				mino.rotateMino(LEFT);
+				Point rotatablePoint = gameBoard.canMinoRotate(mino, LEFT);
+				mino.rotateMino(rotatablePoint, LEFT);
 			}
 			
 
