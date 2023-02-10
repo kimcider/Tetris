@@ -113,14 +113,14 @@ public class GameBoard extends JPanel{
 		return canMinoMove;
 	}
 
-	public Point getBottom(Mino mino) {
-		Point bottomPoint = new Point(mino.getX(), mino.getY());
-		Point[] forTestBaseMinoPoints = mino.getBaseMinosPoints(bottomPoint.getX(), bottomPoint.getY() + 1, mino.getRotation());
-		while(isEmptySpaces(forTestBaseMinoPoints)) {
-			bottomPoint.setPoint(bottomPoint.getX(), bottomPoint.getY() + 1);
-			forTestBaseMinoPoints = mino.getBaseMinosPoints(bottomPoint.getX(), bottomPoint.getY() + 1, mino.getRotation());
+	public Point getBottomPoint(Mino mino) {
+		Point basePoint = new Point(mino.getX(), mino.getY());
+		Point[] testPoints = mino.getBaseMinosPoints(basePoint.getX(), basePoint.getY() + 1, mino.getRotation());
+		while(isEmptySpaces(testPoints)) {
+			basePoint.setPoint(basePoint.getX(), basePoint.getY() + 1);
+			testPoints = mino.getBaseMinosPoints(basePoint.getX(), basePoint.getY() + 1, mino.getRotation());
 		}
-		return bottomPoint;
+		return basePoint;
 	}
 	
 	public Point getRotatablePoint(Mino mino, int rotate) {
@@ -157,6 +157,7 @@ public class GameBoard extends JPanel{
 		}
 		return rotationOffset;
 	}
+	
 	
 	
 	public int stackMinoToBoard(Mino mino) {

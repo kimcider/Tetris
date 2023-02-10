@@ -85,7 +85,7 @@ public class Control extends JFrame{
 		mino.addMinoToGameBoard();
 
 		timer = new Timer(this);
-//		timer.run();
+		timer.run();
 	}
 	
 	public void gameEnd() {
@@ -220,7 +220,7 @@ public class Control extends JFrame{
 					
 					boolean canMoveDown = gameBoard.canMinoMove(mino, DOWN);
 					if(canMoveDown) {
-						Point bottomPoint = gameBoard.getBottom(mino);
+						Point bottomPoint = gameBoard.getBottomPoint(mino);
 						mino.moveMino(bottomPoint);
 						isMovedJustBefore = true;	
 					}

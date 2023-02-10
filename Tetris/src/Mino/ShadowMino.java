@@ -30,7 +30,7 @@ public class ShadowMino {
 	public void moveShadow() {
 		this.basePoint.setPoint(superMino.getX(), superMino.getY());
 		
-		Point bottomPoint = gameBoard.getBottom(superMino);
+		Point bottomPoint = gameBoard.getBottomPoint(superMino);
 		Point[] relativePoint = MinoType.EMPTY.getBaseMinosRelativePoint(superMino.getType(), superMino.getRotation());
 		for(int i = 0; i < 4; i++) {
 			mino[i].setRelativePoint(relativePoint[i]);
