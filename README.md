@@ -37,7 +37,4 @@ java swing을 이용한 tetris
 
 
 
-### Diagram  
-
-
 
