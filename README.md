@@ -24,6 +24,13 @@ java swing을 이용한 tetris
 
   미노가 오른쪽, 왼쪽으로 회전하지 못하는 상태에서 회전 가능한 위치를 찾아서 미노를 회전
 
+  - T-Spin 작동영상
+    
+
+    https://github.com/kimcider/Tetris/assets/105146508/9b06842d-1740-4cc0-b39a-873bf96a7be9
+
+
+
   - 회전이 불가능한 위치
   ![image](https://user-images.githubusercontent.com/105146508/222311937-d2242633-d85e-44e7-a7cd-41dc73df89a9.png)
   
