@@ -39,9 +39,8 @@ java swing을 이용한 tetris
 
      T-Spin 관련 참고 문서: <<https://tetris.fandom.com/wiki/SRS>>
 
-### 플레이 화면
-<img width="676" alt="image" src="https://user-images.githubusercontent.com/105146508/222309611-6440d63c-cf18-4040-a4bd-98164bd424de.png">
+### 플레이 영상
 
 
-
+https://github.com/kimcider/Tetris/assets/105146508/98661811-9dfc-439a-bd0e-6dd781ce17c5
 
